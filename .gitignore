@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.env
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+spark-warehouse/
+metastore_db/
+*.log
