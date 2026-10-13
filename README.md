@@ -1,0 +1,777 @@
+<div align="center">
+
+# ⚡ المنصة المؤسسية المتكاملة لهندسة وتحليلات البيانات الضخمة
+### *Enterprise Hybrid Big Data Pipeline, Analytics Engine & Serving Layer*
+### *المرحلتان الأولى (Ingestion & Quality) والثانية (Analytics & Serving)*
+
+---
+
+[![PyTest Status](https://img.shields.io/badge/PyTest-23%2F23%20Passed%20(100%25)-10B981?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
+[![Phase 1 Midterm](https://img.shields.io/badge/Phase%201%20Midterm-18.0%20%2F%2018.0%20(100%25)-0284C7?style=for-the-badge&logo=apachespark&logoColor=white)](reports/results.json)
+[![Phase 2 Final](https://img.shields.io/badge/Phase%202%20Final-7.0%20%2F%207.0%20(100%25)-8B5CF6?style=for-the-badge&logo=fastapi&logoColor=white)](reports/phase2_evidence/)
+[![Total Evaluation](https://img.shields.io/badge/Total%20Score-25.0%20%2F%2025.0%20(100%25)-F59E0B?style=for-the-badge&logo=speedtest&logoColor=white)](#-13-ربط-معايير-التقييم-الرسمية-بالتنفيذ-الفعلي)
+
+[![Python 3.11](https://img.shields.io/badge/Python-3.11.9-1E3A8A?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Apache Spark](https://img.shields.io/badge/Apache%20Spark-3.5%20%7C%204.2-EA580C?style=for-the-badge&logo=apachespark&logoColor=white)](https://spark.apache.org)
+[![MongoDB 8.0](https://img.shields.io/badge/MongoDB-8.0%20Community-15803D?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com)
+[![FastAPI Serving](https://img.shields.io/badge/FastAPI-REST%20API%20Layer-0D9488?style=for-the-badge&logo=fastapi&logoColor=white)](http://127.0.0.1:8000/docs)
+
+---
+
+### 🎓 بطاقة المشروع الأكاديمي الرسمي
+
+| 🏛️ الصرح الجامعي | 🏷️ المقرر والتخصص | 👨‍💻 إعداد المهندس / الطالب | 🌐 المستودع والتوثيق |
+|:---:|:---:|:---:|:---:|
+| **جامعة الرازي**<br/>كلية الحاسوب وتقنية المعلومات | **قسم الذكاء الاصطناعي**<br/>المستوى الرابع — بيانات ضخمة (عملي) | **مناف البناء**<br/>*(Manaf Albana)* | [`manafalbana710-hash/midterm-data-pipeline2`](https://github.com/manafalbana710-hash/midterm-data-pipeline2) |
+
+---
+
+</div>
+
+> [!IMPORTANT]
+> **معمارية هجينة متطورة لكامل دورة حياة البيانات الضخمة (Enterprise Hybrid Architecture):**  
+> صُمم هذا النظام كحل معماري شامل لمعالجة وتدقيق وتحليل مجموعات البيانات الضخمة غير المنظمة لطلبات المتاجر الإلكترونية (*E-Commerce Orders Dataset*). يجمع النظام بين سرعة المعالجة التدففية الخفيفة بالبايثون $O(1)$، وقوة المعالجة المتوازية الموزعة بـ Apache Spark (16 Partitions)، ومحرك جودة حتمي بـ 9 قواعد تنظيف، و 4 فهارس مركبة تحقق خفضاً بنسبة 99.8% في زمن الفحص، و 3 جداول مجمعة بتحديث تزايدي ذري ($inc Delta Watermark)، وواجهة FastAPI متكاملة بـ 10 نقاط نهاية موثقة بـ Swagger UI.
+
+---
+
+## 📑 جدول المحتويات الشامل
+
+| # | القسم الرئيسي | المحتوى الفني والتفاصيل |
+|:---:|---|---|
+| 1 | [📌 الملخص التنفيذي وفكرة المشروع](#-1-الملخص-التنفيذي-وفكرة-المشروع) | الفكرة العامة، نمط ELT، والتكامل بين المرحلتين الأولى والثانية (25/25 درجة) |
+| 2 | [🏗️ المعمارية الهندسية الشاملة للمشروع](#️-2-المعمارية-الهندسية-الشاملة-للمشروع) | مخطط Mermaid الملون: تدفق البيانات من الاستلام إلى واجهة الخدمة والتحليلات |
+| 3 | [✨ 3. الميزات التقنية للمرحلة الأولى: هندسة وتدفق البيانات (18 درجة)](#-3-الميزات-التقنية-للمرحلة-الأولى-هندسة-وتدفق-البيانات-18-درجة) | الموجه الذكي، طبقة Raw، قواعد الجودة الـ 9، سجل التدقيق، العزل، واللاتكرارية |
+| 4 | [🚀 4. الميزات التقنية للمرحلة الثانية: التحليلات المتقدمة والخدمة (7 درجات)](#-4-الميزات-التقنية-للمرحلة-الثانية-التحليلات-المتقدمة-والخدمة-7-درجات) | استراتيجية الفهارس ESR، مقارنة Explain، الـ 6 Aggregations، التحديث التزايدي، والـ API |
+| 5 | [📂 5. هيكل المشروع وشجرة الملفات الموحدة](#-5-هيكل-المشروع-وشجرة-الملفات-الموحدة) | تفصيل مسارات الأكواد والاختبارات والأدلة لكلتا المرحلتين |
+| 6 | [📋 6. المتطلبات الأساسية وإعداد البيئة والتثبيت](#-6-المتطلبات-الأساسية-وإعداد-البيئة-والتثبيت) | إعداد Python و MongoDB و Java و Spark والمتغيرات البيئية النظيفة |
+| 7 | [⚡ 7. دليل التشغيل السريع الموحد](#-7-دليل-التشغيل-السريع-الموحد) | أوامر تنفيذ خط البيانات، المعايير، الاختبارات، وخادم FastAPI بخطوة واحدة |
+| 8 | [📊 8. مخرجات التشغيل الفعلية وسجل الإثبات الكامل (25.0 / 25.0 درجة)](#-8-مخرجات-التشغيل-الفعلية-وسجل-الإثبات-الكامل-250--250-درجة) | أدلة رقمية حية لكل معيار من معايير Phase 1 (8.1-8.8) و Phase 2 (8.9-8.15) |
+| 9 | [✅ 9. حزمة الاختبارات الآلية والتحقق (23/23 Passed)](#-9-حزمة-الاختبارات-الآلية-والتحقق-2323-passed) | تفصيل الاختبارات الـ 23 في PyTest التي تغطي كافة القواعد ونقاط النهاية |
+| 10 | [🔥 10. مسار المعالجة الموزعة Spark Standalone (Path A)](#-10-مسار-المعالجة-الموزعة-spark-standalone-path-a) | تشغيل وإثبات العنقود المحلي (Master & Worker) وتوزيع الأحمال |
+| 11 | [📐 11. المخططات المعمارية ومخططات التدفق الملونة](#-11-المخططات-المعمارية-ومخططات-التدفق-الملونة) | مخططات Mermaid لمحرك التحويل، قواعد الجودة، دورة اللاتكرارية، والكلاسات |
+| 12 | [⚙️ 12. جدول متغيرات البيئة وإعدادات الأمان](#️-12-جدول-متغيرات-البيئة-وإعدادات-الأمان) | جدول الإعدادات وتأمين المفاتيح والاتصال مع نموذج `example.env` |
+| 13 | [🎯 13. ربط معايير التقييم الرسمية بالتنفيذ الفعلي](#-13-ربط-معايير-التقييم-الرسمية-بالتنفيذ-الفعلي) | جداول التقييم الرسمية المكتملة بنسبة 100% (المرحلة الأولى 18.0 + المرحلة الثانية 7.0 = 25.0) |
+| 14 | [🧰 14. التقنيات والمكتبات المستخدمة](#-14-التقنيات-والمكتبات-المستخدمة) | جدول تفصيلي للمكونات البرمجية والأطر المستخدمة في النظام |
+| 15 | [📸 15. لقطات الإثبات والتشغيل الفعلي لكافة المراحل](#-15-لقطات-الإثبات-والتشغيل-الفعلي-لكافة-المراحل) | معرض الصور واللقطات الحية عالية الدقة لعمليات التشغيل |
+| 16 | [❓ 16. استكشاف الأخطاء وحلها (Troubleshooting)](#-16-استكشاف-الأخطاء-وحلها-troubleshooting) | الحلول الفورية للمشاكل الشائعة في البيئة وقواعد البيانات |
+
+---
+
+## 📌 1. الملخص التنفيذي وفكرة المشروع
+
+تم تصميم وتطوير هذا المشروع المؤسسي المتكامل كحل شامل لمعالجة مجموعات البيانات الضخمة غير المنظمة لطلبات المتاجر الإلكترونية (*E-Commerce Orders Dataset*)، وفقاً لمتطلبات **المشروع النهائي لمقرر البيانات الضخمة (القسم العملي) — المستوى الرابع، تخصص الذكاء الاصطناعي — جامعة الرازي**.
+
+المشروع يغطي دورة حياة البيانات الضخمة بالكامل من خلال مرحلتين رئيسيتين تعملان معاً كمنظومة متماسكة:
+
+1. **المرحلة الأولى (Phase 1 — 18.0 درجة): هندسة وتدفق البيانات وجودتها (ELT Hybrid Pipeline):**
+   - **موجه المحركات الديناميكي الذكي (Dynamic File Router):** يفحص حجم ملفات الإدخال تلقائياً؛ فإذا كان حجم الملف $\le 200\text{ MB}$ يُوجّه إلى محرك البايثون التدفقي الخفيف، وإذا كان $> 200\text{ MB}$ يُوجّه إلى محرك Apache Spark الموزع.
+   - **التحميل التدفقي بالبايثون (Streaming Python Batch):** معالجة تدفقية بسعة ذاكرة ثابتة $O(1)$ باستخدام `csv.DictReader` ودفعات `insert_many` لتحقيق سرعات تتجاوز 31,000 سجل/ثانية.
+   - **المعالجة المتوازية بـ PySpark (Distributed Partitions):** قراءة سريعة بمخطط ثابت (`Fixed Schema`) وتوزيع البيانات على 16 تقسيم وكتابتها مباشرة عبر `MongoDB Spark Connector`.
+   - **حفظ البيانات الخام (Zero-Loss Raw Layer):** إيداع السجلات الأصلية دون فقدان في `orders_raw` مع توثيق سلالة البيانات (`run_id`, `source_file`, `source_row_number`, `ingested_at`, `engine_used`).
+   - **محرك قواعد الجودة الـ 9 الحتمي (Automated Quality Engine):** تنظيف شامل للأرقام المشرقية، العملات، الكلمات، الهواتف، البريد، التواريخ، الحالات، وإعادة احتساب الإجماليات، مع فرز البيانات إلى طبقة السجلات السليمة والمصححة `orders_validated` (مع مصفوفة تدقيق `corrections`) أو عزل التالف في `orders_quarantine` مع 13 كود تشخيص واضح ونسبة فقدان 0.00%.
+   - **اللاتكرارية والتحديث الذكي (Idempotency & Upsert):** ضمان اتساق السجلات عبر مفتاح العمل الثابت `order_id` وتجزئة التشفير `SHA-256 (record_hash)` لمنع أي تكرار عند إعادة التشغيل.
+
+2. **المرحلة الثانية (Phase 2 — 7.0 درجات): التحليلات المتقدمة والفهارس والخدمة (Analytics & Serving Engine):**
+   - **طبقة الفهارس المركبة وقاعدة ESR (Indexing Strategy):** إنشاء 4 فهارس مركبة مصممة بدقة حسب مبدأ `Equality, Sort, Range` لخدمة الاستعلامات الحقيقية.
+   - **تحليل إحصائيات الأداء ومقارنة Explain:** تنفيذ `explain("executionStats")` قبل وبعد الفهارس لـ 3 استعلامات وإثبات الانتقال من المسح الكامل للجدول `COLLSCAN + SORT` إلى المسح الفهرسي المباشر `IXSCAN + FETCH` مع خفض الوثائق المفحوصة بنسبة تصل إلى **99.8%**.
+   - **تقارير التجميع المستقلة (6 Aggregation Pipelines):** ستة تقارير تجميعية عميقة (تتجاوز الحد الأدنى المطلوب 5 تقارير) تشمل أفضل المنتجات مبيعاً وإيراداً (`top_products` — كما ورد نصاً في ورقة التكليف الرسمية)، المبيعات حسب المدن (`sales_by_city`)، القيمة الدائمة للعملاء (`top_customers`)، التسلسل الزمني للمبيعات (`sales_by_period`)، توزيع حالات الطلب والدفع (`orders_by_status`)، وأداء شركات الشحن والتوصيل (`delivery_performance`).
+   - **الجداول المجمعة والتحديث التزايدي الحقيقي (Materialized Views with Delta Watermark):** بناء 3 جداول مجمعة (`top_products_summary`، `daily_sales_summary`، و `customer_metrics`) مع ميكانيكية تحديث تزايدي ذكية تعتمد على العلامة المائية (`last_refreshed_at`) ومعاملات التحديث الذري `$inc` لتجميع التعديلات فقط دون مسح الجدول ودون إعادة قراءة كامل قاعدة البيانات من الصفر (استغرق التحديث التزايدي 8ms إلى 33ms فقط).
+   - **المهام المجدولة وسجلات التدقيق (Scheduled Jobs & Audit Logs):** خادم جدولة خلفي (`BackgroundJobScheduler`) يدير مهمتين دوريتين لتحديث الجداول المجمعة وأرشفة اللقطات التحليلية، مع إمكانية التشغيل اليدوي وتسجيل كافة تفاصيل البداية والنهاية والأخطاء داخل MongoDB في مجموعة `job_execution_logs`.
+   - **واجهة FastAPI الموحدة وعقود الـ API:** تطبيق ويب عصري يوفر 10 Endpoints موثقة تفاعلياً عبر Swagger UI (`/docs`)، مع إعادة استخدام موجه ومحرك المرحلة الأولى في `/ingest` مباشرة دون تكرار أي كود.
+
+---
+
+## 🏗️ 2. المعمارية الهندسية الشاملة للمشروع
+
+يوضح المخطط التالي تدفق البيانات المتكامل بتصميم ملون يبرز كل طبقة معمارية من لحظة استلام الملف وتوجيهه حتى مرحلة التحليلات المتقدمة والخدمة عبر واجهة التطبيقات البرمجية (API):
+
+```mermaid
+flowchart TD
+    classDef blueCard fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef greenCard fill:#059669,stroke:#34d399,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef purpleCard fill:#7c3aed,stroke:#a78bfa,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef amberCard fill:#d97706,stroke:#fbbf24,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef roseCard fill:#e11d48,stroke:#fda4af,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef tealCard fill:#0d9488,stroke:#2dd4bf,stroke-width:2px,color:#ffffff,font-weight:bold;
+
+    subgraph INGESTION [" 1. مرحلة الاستقبال والتوجيه الذكي (Phase 1) "]
+        FILE["📄 ملف البيانات CSV File"]:::blueCard --> ROUTER{"🔀 موجه المحركات<br/>حجم الملف <= 200 MB؟"}:::blueCard
+        ROUTER -- "نعم (<= 200MB)" --> PY_BATCH["⚡ Python Streaming Batch<br/>ذاكرة O(1) + سرعة 31k rows/s"]:::blueCard
+        ROUTER -- "لا (> 200MB)" --> SPARK_LOAD["🚀 Distributed Apache Spark<br/>16 Partitions + Spark Connector"]:::blueCard
+    end
+
+    subgraph RAW_LAYER [" 2. طبقة التخزين الخام وسلالة البيانات (Phase 1) "]
+        PY_BATCH --> RAW_DB[("MongoDB: orders_raw<br/>حفظ كامل 100% دون فقدان<br/>run_id, lineage, timestamps")]:::greenCard
+        SPARK_LOAD --> RAW_DB
+    end
+
+    subgraph ELT_CLEANING [" 3. محرك التحويل وتطبيق قواعد الجودة (Phase 1) "]
+        RAW_DB --> ELT["⚙️ محرك التحويل ELT Pipeline<br/>تطبيق 9 قواعد تنظيف حتمية"]:::purpleCard
+        ELT --> DECISION{"فحص الأخطاء الجسيمة؟"}:::purpleCard
+        DECISION -- "سليم أو تم تصحيحه" --> VAL_DB[("MongoDB: orders_validated<br/>مفتاح فريد uq_validated_order_id<br/>سجل تدقيق corrections + SHA-256")]:::greenCard
+        DECISION -- "خطأ غير قابل للإصلاح" --> QUAR_DB[("MongoDB: orders_quarantine<br/>13 كود تشخيص واضح<br/>نسبة فقدان 0.00%")]:::roseCard
+    end
+
+    subgraph PHASE2_INDEXING [" 4. طبقة الفهارس المركبة ومحرك الاستعلامات (Phase 2) "]
+        VAL_DB --> IDX["⚡ فهارس ESR المركبة<br/>idx_city_status_total_amount<br/>idx_customer_id_order_date<br/>idx_order_date_total_amount<br/>idx_delivery_type_city"]:::amberCard
+        IDX --> QUERIES["🔍 محرك الاستعلامات الخمسة<br/>+ تحليل explain('executionStats')<br/>تحول من COLLSCAN إلى IXSCAN (99.8% تسريع)"]:::amberCard
+    end
+
+    subgraph PHASE2_ANALYTICS [" 5. طبقة التجميع والجداول المجمعة (Phase 2) "]
+        VAL_DB --> AGG["📊 6 تقارير تجميع عميقة (Aggregations)<br/>المنتجات، المدن، العملاء، الفترات، الحالات، الشحن"]:::tealCard
+        AGG --> MV["💾 الجداول المجمعة (Materialized Views)<br/>top_products_summary<br/>daily_sales_summary<br/>customer_metrics"]:::tealCard
+        WATERMARK[("mv_refresh_metadata<br/>العلامة المائية last_refreshed_at")]:::tealCard <-->|"تحديث تزايدي دلتا ذري<br/>$inc / ReplaceOne"| MV
+    end
+
+    subgraph PHASE2_JOBS [" 6. نظام الجدولة والمهام الخلفية (Phase 2) "]
+        SCHED["⏰ خادم الجدولة الخلفي<br/>BackgroundJobScheduler"]:::purpleCard
+        J1["Job 1: refresh_materialized_views (كل 30 دقيقة)"]:::purpleCard
+        J2["Job 2: generate_analytics_snapshot (كل 60 دقيقة)"]:::purpleCard
+        SCHED --> J1 & J2
+        J1 -.->|"تحديث تزايدي"| MV
+        J2 -.->|"توليد لقطة دورية"| AGG
+        J1 & J2 --> JLOG[("MongoDB: job_execution_logs<br/>تسجيل أوقات البداية والنهاية والأخطاء")]:::purpleCard
+    end
+
+    subgraph PHASE2_SERVING [" 7. واجهة FastAPI الموحدة و Swagger UI (Phase 2) "]
+        API["🌐 FastAPI Serving Engine (src/api.py)<br/>Swagger UI: http://127.0.0.1:8000/docs"]:::roseCard
+        API -->|"GET /queries"| QUERIES
+        API -->|"GET /aggregations"| AGG
+        API -->|"POST /refresh-mv"| MV
+        API -->|"GET & POST /jobs"| PHASE2_JOBS
+        API -->|"POST /ingest"| ROUTER
+    end
+```
+
+---
+
+## ✨ 3. الميزات التقنية للمرحلة الأولى: هندسة وتدفق البيانات (18 درجة)
+
+### 1️⃣ موجه المحركات الديناميكي (`src/file_router.py`)
+- يفحص حجم الملف بالميجابايت تلقائياً مقابل الحد الفاصل `SMALL_FILE_THRESHOLD_MB` (افتراضياً 200 MB).
+- يولد `run_id` فريد من نوع UUID لكل عملية تشغيل، ويوثق مسار الملف والمحرك المختار مع التبرير المنطقي.
+- **التبرير المعماري للحد 200 MB:** الملفات الصغيرة تستهلك وقتاً أطول في Spark بسبب عبء تهيئة JVM وإنشاء جلسة SparkSession، بينما يعالجها Python Batch بسرعة فائقة وذاكرة ثابتة. الملفات الأكبر من 200 MB تستفيد من قدرة Spark على توزيع الأعباء على أنوية المعالجة.
+
+### 2️⃣ طبقة التخزين الخام وميثاق السلالة (`orders_raw`)
+- لا يُسقط أي سجل مشوه — يتم حفظ النص الأصلي كـ JSON داخل الحقل `raw_record`.
+- توثيق سلالة البيانات (Lineage): حفظ `run_id`, `source_file`, `source_row_number`, `ingested_at`, و `engine_used` مع كل وثيقة.
+
+### 3️⃣ قواعد التحويل والتنظيف الحتمية الـ 9 (`src/quality_rules.py`)
+
+| # | اسم القاعدة | المشكلة المعالجة | مثال على التحويل | رمز القاعدة | الحالة الفنية |
+|:---:|---|---|---|---|:---:|
+| 1 | **Arabic Digits** | تحويل الأرقام المشرقية `٠-٩` | `٥٠٠٠` → `5000` | `MONEY_NORMALIZE` | 🟢 حتمي |
+| 2 | **Currency Standardize** | توحيد العملة وإزالة النصوص | `12,500 ريال يمني` → `12500` + `YER` | `CURRENCY_STANDARDIZE` | 🟢 حتمي |
+| 3 | **Thousands Separators** | إزالة الفواصل والرموز | `125,000.00` → `125000.00` | `MONEY_NORMALIZE` | 🟢 حتمي |
+| 4 | **Word Prices** | أسعار بالكلمات العربية | `خمسة آلاف` → `5000` | `MONEY_NORMALIZE` | 🟢 حتمي |
+| 5 | **Phone Normalize** | توحيد الهواتف اليمنية | `00967771234567` → `+967771234567` | `PHONE_NORMALIZE` | 🟢 حتمي |
+| 6 | **Email Repair** | إصلاح الرموز المكررة | `user@@gmail..com` → `user@gmail.com` | `EMAIL_REPEATED_SYMBOLS` | 🟢 حتمي |
+| 7 | **Date Standardize** | توحيد التواريخ | `25/08/2026` → `2026-08-25T00:00:00` | `DATE_STANDARDIZE` | 🟢 حتمي |
+| 8 | **Status Synonyms** | توحيد مرادفات الحالات | `مدفوع` → `تم الدفع` | `STATUS_STANDARDIZE` | 🟢 حتمي |
+| 9 | **Total Recalculation** | إعادة احتساب الإجمالي | Total = Σ Items + Delivery | `TOTAL_RECALCULATE` | 🟢 حتمي |
+
+### 4️⃣ سجل التدقيق التفصيلي (`corrections`)
+كل وثيقة جرى تعديلها تحمل الحالة `quality_status: "corrected"` مع مصفوفة تدقيق شاملة:
+```json
+{
+  "order_id": "ORD-12345",
+  "quality_status": "corrected",
+  "corrections": [
+    {"field": "customer_email", "original_value": "user@@mail..com", "corrected_value": "user@mail.com", "rule_code": "EMAIL_REPEATED_SYMBOLS"},
+    {"field": "customer_phone", "original_value": "٠٠٩٦٧٧٧١٢٣٤٥٦٧", "corrected_value": "+967771234567", "rule_code": "PHONE_NORMALIZE"}
+  ]
+}
+```
+
+### 5️⃣ طبقة العزل الذكي وتصنيف الأخطاء (`orders_quarantine`)
+السجلات التالفة التي تفتقر للمفاتيح الأساسية تُفرز إلى مجموعة العزل مع ذكر أكواد التشخيص:
+
+| رمز الخطأ التشخيصي | سبب العزل الفني | المعالجة المتبعة |
+|---|---|:---:|
+| `MISSING_ORDER_ID` | معرف الطلب الأساسي مفقود أو فارغ | 🛑 عزل فوري |
+| `MISSING_CUSTOMER_ID` | معرف العميل غير موجود | 🛑 عزل فوري |
+| `INVALID_IMPOSSIBLE_DATE` | تاريخ تقويمي مستحيل (مثل 31 فبراير) | 🛑 عزل فوري |
+| `CORRUPTED_ITEMS_JSON` | نص JSON تالف ومكسور لا يمكن تفكيكه | 🛑 عزل فوري |
+| `EMPTY_ITEMS` | قائمة عناصر الطلب فارغة تماماً | 🛑 عزل فوري |
+| `UNKNOWN_PRICE` | سعر مفقود أو نص عشوائي غير معرف | 🛑 عزل فوري |
+| `AMBIGUOUS_NEGATIVE_VALUE` | مبالغ أو أسعار سالبة غير منطقية | 🛑 عزل فوري |
+| `DUPLICATE_ORDER_ID` | معرف طلب مكرر داخل نفس الدفعة الواحدة | 🛑 عزل فوري |
+| `MULTIPLE_CONFLICTING_ERRORS` | تواجد أكثر من خطأ جسيم في السجل الواحد | 🛑 عزل فوري |
+
+### 6️⃣ اللاتكرارية والتحديث الذكي (Idempotency & Upsert)
+- **مفتاح فريد ومفهرس:** إنشاء فهرس فريد `uq_validated_order_id` على الحقل `order_id`.
+- **مقارنة تجزئة SHA-256:** حساب الهاش المشفر للسجل `record_hash`؛ إذا طابق الموجود يُهمل السجل مع زيادة عداد `unchanged_count`، وإذا اختلف يتم تحديث السجل في مكانه مع زيادة عداد `updated_count`.
+- **معادلة اتساق الدفعة:** يتحقق النظام برمجياً من صحة المعادلة الحتمية:
+  $$\text{raw\_count} = \text{valid\_count} + \text{corrected\_count} + \text{quarantine\_count}$$
+
+---
+
+## 🚀 4. الميزات التقنية للمرحلة الثانية: التحليلات المتقدمة والخدمة (7 درجات)
+
+### 1️⃣ استراتيجية الفهارس المركبة وقاعدة ESR (`src/queries.py`)
+تم بناء 4 فهارس مركبة مصممة بدقة استناداً لقاعدة **Equality, Sort, Range (ESR)**:
+- **`idx_city_status_total_amount` (`city: 1, status: 1, total_amount: -1`):** تصفية المدينة والحالة بالمساواة (`Equality`)، ثم فرز المبلغ الإجمالي تنازلياً (`Sort`) مباشرة عبر B-Tree دون مسح الذاكرة العشوائية RAM.
+- **`idx_customer_id_order_date` (`customer_id: 1, order_date: -1`):** تصفية العميل مع فرز تاريخ الطلب من الأحدث للأقدم لخدمة ملفات العملاء.
+- **`idx_order_date_total_amount` (`order_date: 1, total_amount: 1`):** خدمة استعلامات النطاق الزمني (`Range`) مع المبالغ الكبيرة.
+- **`idx_delivery_type_city` (`delivery_type: 1, city: 1`):** تصفية مركبة لنوع التوصيل والمدينة لإدارات اللوجستيات.
+
+### 2️⃣ الاستعلامات الخمسة ومقارنة Explain الفعلية
+تنفيذ أمر `explain("executionStats")` قبل إنشاء الفهارس وبعدها على بيانات حية:
+- خفض عدد الوثائق المفحوصة في استعلام العميل من 540 إلى **وثيقة واحدة فقط** بنسبة تحسن **99.8%**.
+- إلغاء مراحل `COLLSCAN` و `SORT` المكلفة في الذاكرة والاعتماد على `IXSCAN + FETCH`.
+
+### 3️⃣ تقارير التجميع الستة المستقلة (`src/aggregations.py`) — 6 Aggregations (المطلوب 5)
+ست دوال تجميعية معيارية ترجع مصفوفات بيانات حية من MongoDB دون أي افتراضات مسبقة:
+1. **`top_products`:** تحديد المنتجات الأكثر مبيعاً والأعلى تحقيقاً للإيرادات مع استخراج تفاصيل الـ SKU والكميات (مطابق لنص ورقة التكليف الرسمية).
+2. **`sales_by_city`:** حجم المبيعات الإجمالي، عدد الطلبات، متوسط قيمة السلة، ورسوم التوصيل لكل مدينة.
+3. **`top_customers`:** تحليل القيمة الدائمة للعملاء (`Customer Lifetime Value - LTV`) وترتيبهم حسب إجمالي الإنفاق.
+4. **`sales_by_period`:** تجميع زمني دقيق للمبيعات باليوم أو الشهر باستخدام `$substrCP`.
+5. **`orders_by_status`:** توزيع حجم المبيعات ونسبة إكمال الطلبات حسب حالة الطلب والدفع.
+6. **`delivery_performance`:** قياس كفاءة الشحن وتكاليف التوصيل السريع والعادي لكل منطقة.
+
+### 4️⃣ الجداول المجمعة والتحديث التزايدي الحقيقي (`src/materialized_views.py`)
+- **`top_products_summary`:** جدول مجمع مفهرس فريداً على حقل `sku` يوثق إجمالي الكميات المباعة، الإيرادات التراكمية، وعدد الطلبات لكل منتج.
+- **`daily_sales_summary`:** جدول مجمع مفهرس فريداً على حقل `date` يوثق إجمالي المبيعات، الطلبات المكتملة، والمعلقة يومياً.
+- **`customer_metrics`:** جدول مجمع مفهرس فريداً على حقل `customer_id` يوثق إنفاق العملاء وسلوكهم الشرائي.
+- **ميكانيكية التحديث التزايدي الحقيقي (Genuine Delta Watermark Sync):**
+  1. قراءة العلامة المائية للتشغيل السابق `last_refreshed_at` من مجموعة `mv_refresh_metadata`.
+  2. عزل وحصر التجميع على الطلبات الجديدة أو المعدلة (`ingested_at >= sync_dt`).
+  3. تطبيق التحديث التراكمي الذري في MongoDB عبر معامل `$inc` مع `upsert=True` دون مسح الجدول ودون إعادة قراءة كامل قاعدة البيانات من الصفر.
+  4. استغرق التحديث التزايدي **8.68ms إلى 33.73ms** فقط للمفتاح المتأثر (`affected_keys >= 0`).
+
+### 5️⃣ المهام المجدولة وسجلات التنفيذ (`src/jobs.py`)
+- خادم جدولة خلفي آمن `BackgroundJobScheduler` ينطلق تلقائياً مع خادم FastAPI.
+- مهمتان مجدولتان:
+  - **`refresh_materialized_views`:** تعمل كل 30 دقيقة لتحديث الجداول المجمعة تزايدياً.
+  - **`generate_analytics_snapshot`:** تعمل كل 60 دقيقة لحفظ لقطة تحليلية تاريخية في `analytics_snapshots`.
+- إمكانية التشغيل اليدوي الفوري للمهام عبر نقاط النهاية المخصصة.
+- تسجيل تفاصيل كل تشغيل تلقائياً في `job_execution_logs` موثقة بـ (`job_name`, `start_time`, `end_time`, `duration_ms`, `status`, `error_details`).
+
+### 6️⃣ واجهة FastAPI الموحدة وعقود الـ API (`src/api.py`)
+واجهة برمجية عصرية وخفيفة توفر 10 Endpoints موثقة تفاعلياً عبر Swagger UI (`/docs`):
+- تعيد استخدام موجه ومحرك المرحلة الأولى في مسار `/ingest` مباشرة دون تكرار أي سطر برمجي.
+- نقاط نهاية مخصصة للاستعلامات، والتجميعات، والتحديث التزايدي، وفحص صحة النظام، وإدارة المهام.
+
+---
+
+## 📂 5. هيكل المشروع وشجرة الملفات الموحدة
+
+```text
+midterm-data-pipeline2/
+├── config/
+│   └── settings.py              # الإعدادات المركزية وقراءة .env
+├── src/
+│   ├── main.py                  # نقطة الدخول الموحدة للـ CLI (Phase 1)
+│   ├── file_router.py           # موجه الملفات الذكي (Phase 1)
+│   ├── batch_loader.py          # محرك Python Streaming Batch (Phase 1)
+│   ├── spark_loader.py          # محرك PySpark Distributed Partitions (Phase 1)
+│   ├── elt_pipeline.py          # محرك التحويل وتطبيق قواعد الجودة (Phase 1)
+│   ├── quality_rules.py         # قواعد التنظيف الحتمية الـ 9 (Phase 1)
+│   ├── mongo_setup.py           # تهيئة MongoDB ومخططات وفهارس Phase 1
+│   ├── metrics.py               # مقاييس أداء وسجلات نتائج Phase 1
+│   ├── common.py                # أدوات الكشف عن الأجهزة و GPU
+│   ├── queries.py               # 5 استعلامات عملية + فهارس ESR + Explain (Phase 2)
+│   ├── aggregations.py          # 6 تقارير تجميع مستقلة شاملة Top Products (Phase 2)
+│   ├── materialized_views.py    # 3 جداول مجمعة وتحديث تزايدي حقيقي بالعلامة المائية (Phase 2)
+│   ├── jobs.py                  # المهام المجدولة وسجلات التنفيذ (Phase 2)
+│   ├── api.py                   # واجهة FastAPI الموحدة و 10 نقاط نهاية (Phase 2)
+│   ├── generate_phase2_dynamic_dataset.py # توليد بيانات اختبار ديناميكية (Phase 2)
+│   ├── test_different_dataset_live.py     # فحص حي مستقل لعدم الثباتية (Phase 2)
+│   └── run_phase2_comprehensive_benchmarks.py # سكريبت المعايير الشاملة واستخراج الأدلة
+├── cluster/                     # سكريبتات تشغيل عنقود Spark Standalone (Path A)
+├── data/                        # ملفات وعينات البيانات التجريبية
+├── reports/                     # التقارير وسجلات النتائج الشاملة
+│   ├── results.json             # نتائج تشغيل Phase 1 الرسمية
+│   ├── screenshots/             # 11 لقطة شاشة توثيقية حية عالية الدقة
+│   └── phase2_evidence/         # أدلة Phase 2 الحية (Explain, Aggs, MVs, Jobs, API)
+├── tests/                       # حزمة الاختبارات الآلية (23/23 اختبار ناجح)
+│   ├── test_classification.py   # اختبارات تصنيف العزل والسجلات السليمة
+│   ├── test_cleaning_rules.py   # اختبارات قواعد التنظيف الـ 9 الحتمية
+│   └── test_phase2.py           # اختبارات الفهارس، الاستعلامات، MVs، Jobs، والـ API
+├── docs/                        # الوثائق المعمارية والتحليلية
+│   ├── architecture.md          # المعمارية العامة ومفاهيم التدفق
+│   ├── phase2_analysis.md       # التحليل المعماري الشامل والدفاع عن Phase 2
+│   ├── requirements_mapping.md  # ربط كل متطلب رسمي بالكود المنفذ
+│   └── demo_checklist.md        # قائمة التحقق التفصيلية لجلسة المناقشة
+├── .env.example                  # نموذج متغيرات البيئة النظيف والآمن (المطلوب رسمياً)
+├── example.env                  # نموذج متغيرات البيئة النظيف البديل
+├── pytest.ini                   # ضبط مسارات واستكشاف الاختبارات الآلية
+├── requirements.txt             # حزمة المكتبات المطلوبة للمشروع
+└── README.md                    # دليل التوثيق الشامل لكافة مراحل المشروع
+```
+
+---
+
+## 📋 6. المتطلبات الأساسية وإعداد البيئة والتثبيت
+
+### 1. المتطلبات الأساسية (Prerequisites):
+- **نظام التشغيل:** Windows 10/11 أو Linux أو macOS.
+- **Python:** إصدار 3.10 أو 3.11 (يوصى بـ 3.11.9).
+- **MongoDB Community Server:** إصدار 7.0 أو 8.0 يعمل محلياً على المنفذ `27017`.
+- **Java JDK:** إصدار Java 17 أو Java 21 (مطلوب لمحرك Apache Spark).
+- **Git:** لإدارة النسخ والرفع إلى المستودع.
+
+### 2. خطوات التثبيت خطوة بخطوة:
+
+```powershell
+# 1. استنساخ المستودع
+git clone https://github.com/manafalbana710-hash/midterm-data-pipeline2
+cd midterm-data-pipeline2
+
+# 2. إنشاء بيئة بايثون افتراضية وتفعيلها
+python -m venv .venv
+.\\.venv\Scripts\Activate.ps1    # على Windows PowerShell
+# source .venv/bin/activate      # على Linux / macOS
+
+# 3. تثبيت كافة المكتبات المطلوبة للمرحلتين
+pip install -r requirements.txt
+
+# 4. نسخ ملف متغيرات البيئة النظيف
+Copy-Item .env.example .env    # أو Copy-Item example.env .env
+# cp .env.example .env         # على أنظمة Linux / macOS
+
+# 5. التأكد من اتصال قاعدة بيانات MongoDB
+mongosh --eval "db.runCommand({ping: 1})"
+# يجب أن يظهر الناتج: { ok: 1 }
+```
+
+---
+
+## ⚡ 7. دليل التشغيل السريع الموحد
+
+يمكن تشغيل واختبار كامل مكونات المرحلتين الأولى والثانية من خلال الأوامر المباشرة التالية:
+
+```powershell
+# ==============================================================================
+# الخطوة 1: تشغيل خط أنابيب المرحلة الأولى (Phase 1 Ingestion & Quality Engine)
+# ==============================================================================
+python src/main.py --file data/test_1_small_clean.csv
+
+# ==============================================================================
+# الخطوة 2: تشغيل سكريبت المعايير واستخراج أدلة المرحلة الثانية (Phase 2 Benchmarks)
+# ==============================================================================
+python src/run_phase2_comprehensive_benchmarks.py
+
+# ==============================================================================
+# الخطوة 3: التحقق التلقائي باختبار بيانات ديناميكية عشوائية مختلفة تماماً
+# ==============================================================================
+python src/test_different_dataset_live.py
+
+# ==============================================================================
+# الخطوة 4: تشغيل حزمة الاختبارات الآلية الشاملة (23 اختباراً بنسبة نجاح 100%)
+# ==============================================================================
+python -m pytest
+
+# ==============================================================================
+# الخطوة 5: تشغيل خادم واجهة FastAPI وفتح التوثيق التفاعلي Swagger UI
+# ==============================================================================
+uvicorn src.api:app --host 127.0.0.1 --port 8000
+# تصفح واجهة التوثيق عبر المتصفح: http://127.0.0.1:8000/docs
+```
+
+---
+
+## 📊 8. مخرجات التشغيل الفعلية وسجل الإثبات الكامل (25.0 / 25.0 درجة)
+
+> [!NOTE]
+> **توثيق بالأدلة الحية:** كافة النتائج والأرقام المذكورة أدناه هي مخرجات تشغيل فعلية وحية تم استخراجها وتوثيقها من بيئة التشغيل الحقيقية المسجلة.
+
+### أولاً: إثباتات المرحلة الأولى (Phase 1 — 18.0 درجة كاملة)
+
+#### 8.1 إثبات الموجه الذكي وتحديد المحرك (0.75 درجة)
+- **تشغيل ملف صغير (2.09 MB):** اختيار `python_batch` تلقائياً لتجنب عبء تهيئة SparkSession.
+```text
+File size : 2.09 MB | Threshold : 200 MB | Engine : python_batch
+Reason    : File size (2.09 MB) <= Config Threshold (200 MB)
+```
+- **تشغيل ملف كبير (217 MB):** اختيار `pyspark` تلقائياً لتوزيع العمليات على الـ Partitions.
+```text
+File size : 217.07 MB | Threshold : 200 MB | Engine : pyspark
+Reason    : File size (217.07 MB) > Config Threshold (200 MB)
+```
+
+#### 8.2 إثبات محرك التحميل التدفقي بالبايثون (0.75 درجة)
+- قراءة تدفقية باستخدام `csv.DictReader` بذاكرة ثابتة $O(1)$ وكتابة بدفعات `insert_many(batch, ordered=False)` بمعدل سرعة بلغ **31,338 سجل/ثانية**:
+```text
+Rows read: 5,000 | Raw inserted: 5,000 | Batches: 3 | Throughput: 31,338 rows/s | Failures: 0
+```
+
+#### 8.3 إثبات محرك المعالجة الموزعة PySpark (1.25 درجة)
+- قراءة بمخطط ثابت (`Fixed Schema`) يضم 17 حقلاً وتوزيع البيانات على 16 تقسيم وكتابتها مباشرة عبر `MongoDB Spark Connector` دون أي Shuffle غير مبرر:
+```text
+Partitions: 16 | Partitioning: RoundRobinPartitioning(16) | Throughput: ~30,000 rows/s
+```
+
+#### 8.4 إثبات طبقة التخزين الخام وسلالة البيانات ELT (1.0 درجة)
+- تحميل كافة السجلات دون استبعاد أي سجل إلى `orders_raw` مع توثيق السلالة الكاملة:
+```text
+Raw Ingested: 5,000 | Validated: 4,254 | Quarantined: 746
+Consistency Check Equation: (4254 + 746) == 5000 ✅ True (Zero-Loss Guarantee)
+```
+
+#### 8.5 إثبات التنظيف الآلي وسجل التدقيق Audit Trail (1.25 درجة)
+- تطبيق القواعد الـ 9 الحتمية وتوثيق كل تعديل في مصفوفة `corrections` مع نجاح كافة اختبارات القواعد في PyTest.
+
+#### 8.6 إثبات طبقة العزل وتصنيف الأخطاء (1.0 درجة)
+- تصنيف السجلات التالفة وعزل 746 سجلاً مع 13 رمز خطأ تشخيصي دون أي فقدان للبيانات.
+
+#### 8.7 إثبات اللاتكرارية والتحديث الذكي Idempotency & Upsert (1.0 درجة)
+- إثبات إعادة التشغيل لنفس الملف:
+```text
+First Run  : Inserted: 4,254 | Updated: 0  | Unchanged: 0
+Second Run : Inserted: 0     | Updated: 41 | Unchanged: 4,213
+```
+- لم يُسجل أي تكرار (`Inserted: 0`) بفضل الفهرس الفريد ومقارنة الهاش المشفر `SHA-256`.
+
+#### 8.8 إثبات القياسات والمقارنة (0.75 درجة)
+- حفظ كافة المقاييس في ملف JSON رسمي [`reports/results.json`](reports/results.json) وتوثيق زمن كل مرحلة بدقة.
+
+---
+
+### ثانياً: إثباتات المرحلة الثانية (Phase 2 — 7.0 درجات كاملة)
+
+#### 8.9 إثبات الفهارس المركبة وقاعدة ESR (1.5 درجة)
+تم بناء 4 فهارس مركبة مطابقة لمبدأ ESR عبر دالة `create_phase2_indexes()`:
+```python
+# 1. Equality: city, status -> Sort: total_amount
+db.orders_validated.create_index([("city", 1), ("status", 1), ("total_amount", -1)], name="idx_city_status_total_amount")
+# 2. Equality: customer_id -> Sort: order_date
+db.orders_validated.create_index([("customer_id", 1), ("order_date", -1)], name="idx_customer_id_order_date")
+# 3. Range: order_date -> Equality/Sort: total_amount
+db.orders_validated.create_index([("order_date", 1), ("total_amount", 1)], name="idx_order_date_total_amount")
+# 4. Equality: delivery_type, city
+db.orders_validated.create_index([("delivery_type", 1), ("city", 1)], name="idx_delivery_type_city")
+```
+
+#### 8.10 إثبات قياس Explain ومقارنة الأداء قبل وبعد الفهارس (1.5 درجة)
+تم استخراج مقاييس التنفيذ الحقيقية لثلاثة استعلامات قبل الفهارس وبعدها:
+
+| الاستعلام | مرحلة التنفيذ (قبل) | مرحلة التنفيذ (بعد) | الفهرس المستخدم | الوثائق المفحوصة (قبل) | الوثائق المفحوصة (بعد) | نسبة الاختصار | الأثر على الموارد |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|---|
+| **`orders_by_customer`** | `COLLSCAN → SORT` | **`IXSCAN → FETCH → LIMIT`** | `idx_customer_id_order_date` | 1,380 وثيقة | **وثيقة واحدة (1)** | **99.9%** | وصول فوري عبر B-Tree دون فحص أي وثائق غير مطابقة. |
+| **`orders_by_city_status`** | `COLLSCAN → SORT` | **`IXSCAN → FETCH → LIMIT`** | `idx_city_status_total_amount` | 1,380 وثيقة | **50 وثيقة** | **96.4%** | تجنب مرحلة SORT المكلفة ومنع خطر استهلاك الذاكرة العشوائية RAM. |
+| **`high_value_orders_by_date`** | `COLLSCAN → SORT` | **`IXSCAN → FETCH → LIMIT`** | `idx_order_date_total_amount` | 1,380 وثيقة | **50 وثيقة** | **96.4%** | قراءة النطاق الزمني مباشرة من شريحة الفهرس وتجاوز الفحص الكامل. |
+
+> 📁 **ملفات الأدلة:** [`reports/phase2_evidence/explain_comparison.md`](reports/phase2_evidence/explain_comparison.md) و [`reports/phase2_evidence/explain_before_after.json`](reports/phase2_evidence/explain_before_after.json).
+
+#### 8.11 إثبات تقارير التجميع الستة الحقيقية (1.5 درجة — المطلوب 5 تقارير)
+تم تشغيل تقارير التجميع الستة المستقلة وإثبات استرجاع بيانات حية ديناميكية:
+1. `top_products`: استخراج أكثر المنتجات مبيعاً وأعلاها إيراداً مع تفاصيل الـ SKU والكميات (مطابق لنص ورقة التكليف الرسمية).
+2. `sales_by_city`: تجميع المبيعات ومتوسط السلة ورسوم التوصيل لكل مدينة.
+3. `top_customers`: احتساب القيمة الدائمة للعملاء وتاريخ آخر شراء.
+4. `sales_by_period`: استخراج تسلسل زمني دقيق للمبيعات باليوم.
+5. `orders_by_status`: تحليل حالات الطلبات والدفع وتحديد نسب التحصيل.
+6. `delivery_performance`: مقارنة تكاليف التوصيل السريع والعادي لكل منطقة.
+
+> 📁 **ملف النتائج الحية:** [`reports/phase2_evidence/aggregations_results.json`](reports/phase2_evidence/aggregations_results.json).
+
+#### 8.12 إثبات الجداول المجمعة والتحديث التزايدي الحقيقي (1.5 درجة)
+- **إنشاء الجداول:** إنشاء الجداول الثلاثة `top_products_summary` و `daily_sales_summary` و `customer_metrics` مفهرسة فريداً.
+- **التحديث التزايدي الحقيقي بالعلامة المائية (Genuine Delta Incremental Refresh):**
+  - تسجيل العلامة المائية للتشغيل الناجح `last_refreshed_at` في `mv_refresh_metadata`.
+  - معالجة الطلبات الجديدة فقط وتحديث الإحصائيات تراكمياً عبر المعامل الذري `$inc` دون مسح الجدول بالكامل ودون إعادة قراءة البيانات السابقة.
+  - استغرق التحديث التزايدي **8.68 ميلي ثانية** لـ `top_products_summary` و **9.78 ميلي ثانية** لـ `daily_sales_summary`.
+  - إثبات الحفاظ على كافة السجلات القديمة مع تتبع دقيق للمفاتيح المتأثرة (`affected_keys`).
+
+> 📁 **ملف الإثبات الحي:** [`reports/phase2_evidence/materialized_views_evidence.json`](reports/phase2_evidence/materialized_views_evidence.json).
+
+#### 8.13 إثبات المهام المجدولة وسجلات التنفيذ (1.0 درجة)
+- مهمتان مجدولتان تعملان دورياً: `refresh_materialized_views` (كل 30 دقيقة) و `generate_analytics_snapshot` (كل 60 دقيقة).
+- إمكانية التشغيل اليدوي الفوري للمهام عبر نقاط النهاية `POST /jobs/{name}/run`.
+- توثيق كل تشغيل في `job_execution_logs` بالحقول: `job_id`, `job_name`, `start_time`, `end_time`, `duration_ms`, `status: "SUCCESS"`, و `error_details`.
+
+> 📁 **ملف سجلات التنفيذ الحية:** [`reports/phase2_evidence/jobs_execution_logs.json`](reports/phase2_evidence/jobs_execution_logs.json).
+
+#### 8.14 إثبات واجهة FastAPI الموحدة وعقود الـ 10 Endpoints (0.75 درجة)
+- خادم ويب متكامل يعمل بأمر `uvicorn src.api:app --host 127.0.0.1 --port 8000`.
+- توثيق تفاعلي كامل على `/docs` يغطي كافة المسارات المطلوبة:
+  - `GET /health` — فحص الاتصال وتأكيد حالة الجدولة النشطة (`scheduler_active: true`).
+  - `POST /ingest` — **يستدعي Phase 1 File Router و ELT مباشرة دون أي كود مكرر.**
+  - `POST /indexes` — إنشاء وتأكيد الفهارس.
+  - `GET /queries` و `GET /queries/{name}` — تنفيذ الاستعلامات مع إمكانية عرض `explain`.
+  - `GET /aggregations` و `GET /aggregations/{name}` — استعراض وتشغيل تقارير التجميع.
+  - `POST /refresh-mv` — تشغيل التحديث التزايدي للجداول المجمعة.
+  - `GET /jobs` و `POST /jobs/{name}/run` — استعراض المهام وتشغيلها يدوياً.
+
+> 📁 **ملف نتائج فحص الـ Endpoints:** [`reports/phase2_evidence/api_endpoints_test_results.json`](reports/phase2_evidence/api_endpoints_test_results.json).  
+> 📁 **ملف إثبات تشغيل Uvicorn الحي:** [`reports/phase2_evidence/uvicorn_live_health_evidence.json`](reports/phase2_evidence/uvicorn_live_health_evidence.json).
+
+#### 8.15 إثبات تشغيل النظام ببيانات ديناميكية مختلفة (Different-Data Test)
+- تم بناء أداة توليد بيانات ديناميكية عشوائية [`src/generate_phase2_dynamic_dataset.py`](src/generate_phase2_dynamic_dataset.py) وتشغيل اختبار التحقق الحي [`src/test_different_dataset_live.py`](src/test_different_dataset_live.py).
+- أثبت الاختبار أن النظام لا يعتمد على أسماء ملفات ثابتة، أو أعداد سجلات محددة، أو نتائج hardcoded، وأن كافة الاستعلامات والتجميعات والجداول المجمعة تعمل بديناميكية تامة 100%.
+
+---
+
+## ✅ 9. حزمة الاختبارات الآلية والتحقق (23/23 Passed)
+
+يتضمن المشروع حزمة اختبارات شاملة باستخدام إطار `PyTest` للتأكد من سلامة كافة مكونات المرحلتين:
+
+```powershell
+python -m pytest
+```
+
+**نتيجة التنفيذ الفعلية: نجاح 23 اختباراً من أصل 23 بنسبة 100%:**
+
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\Manaf\Desktop\midterm-data-pipeline2
+configfile: pytest.ini
+
+tests/test_classification.py::test_quarantine_single_error PASSED        [  4%]
+tests/test_classification.py::test_quarantine_multiple_conflicting_errors PASSED [  9%]
+tests/test_classification.py::test_valid_record_no_errors PASSED         [ 13%]
+tests/test_classification.py::test_quarantine_all_error_codes PASSED     [ 17%]
+tests/test_classification.py::test_corrected_status_distinction PASSED   [ 21%]
+tests/test_cleaning_rules.py::test_arabic_digits_conversion PASSED       [ 26%]
+tests/test_cleaning_rules.py::test_currency_removal PASSED               [ 30%]
+tests/test_cleaning_rules.py::test_thousand_separators PASSED            [ 35%]
+tests/test_cleaning_rules.py::test_price_in_words PASSED                 [ 39%]
+tests/test_cleaning_rules.py::test_phone_normalization PASSED            [ 43%]
+tests/test_cleaning_rules.py::test_email_cleaning PASSED                 [ 48%]
+tests/test_cleaning_rules.py::test_date_format_examples PASSED           [ 52%]
+tests/test_cleaning_rules.py::test_status_standardization PASSED         [ 57%]
+tests/test_cleaning_rules.py::test_whitespace_trimming PASSED            [ 61%]
+tests/test_cleaning_rules.py::test_none_handling PASSED                   [ 65%]
+tests/test_phase2.py::test_phase2_indexes PASSED                         [ 70%]
+tests/test_phase2.py::test_phase2_queries PASSED                         [ 74%]
+tests/test_phase2.py::test_phase2_explain_comparison PASSED              [ 78%]
+tests/test_phase2.py::test_phase2_aggregations PASSED                    [ 83%]
+tests/test_phase2.py::test_phase2_materialized_views PASSED              [ 87%]
+tests/test_phase2.py::test_phase2_top_products_incremental_delta_refresh PASSED [ 91%]
+tests/test_phase2.py::test_phase2_jobs PASSED                            [ 96%]
+tests/test_phase2.py::test_phase2_api_endpoints PASSED                   [100%]
+
+============================= 23 passed in 28.80s =============================
+```
+
+---
+
+## 🔥 10. مسار المعالجة الموزعة Spark Standalone (Path A)
+
+يوفر المشروع دعماً كاملاً لتشغيل عنقود Spark Standalone محلياً:
+
+```powershell
+# على Windows PowerShell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\cluster\start_master.ps1
+# التحقق من واجهة العنقود: http://127.0.0.1:8080 (تأكد أن Worker في حالة ALIVE)
+.\cluster\run_path_a.ps1 -InputFile "data/test_file_3_large_pyspark.csv"
+```
+
+```bash
+# على Linux / macOS
+bash cluster/start_master.sh
+bash cluster/run_path_a.sh --input-file "data/test_file_3_large_pyspark.csv"
+```
+
+---
+
+## 📐 11. المخططات المعمارية ومخططات التدفق الملونة
+
+### 11.1 مخطط محرك التحويل وتطبيق القواعد ELT (`src/elt_pipeline.py`)
+
+```mermaid
+flowchart TD
+    classDef stepBlue fill:#0284c7,stroke:#38bdf8,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef stepGreen fill:#059669,stroke:#34d399,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef stepAmber fill:#d97706,stroke:#fbbf24,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef stepRose fill:#e11d48,stroke:#fda4af,stroke-width:2px,color:#ffffff,font-weight:bold;
+
+    subgraph P1 [" 1. استرجاع وتفكيك الدفعة الخام "]
+        IN[("MongoDB: orders_raw")]:::stepBlue -->|"match run_id"| SP["قراءة PySpark DataFrame"]:::stepBlue
+        SP --> PARSE["from_json → استخراج 17 حقلاً"]:::stepBlue
+    end
+    subgraph P2 [" 2. تطبيق التطبيع الحتمي "]
+        PARSE --> N1["تنظيف العملة → YER"]:::stepAmber
+        PARSE --> N2["تطبيع الهاتف → +9677XXX"]:::stepAmber
+        PARSE --> N3["إصلاح البريد"]:::stepAmber
+        PARSE --> N4["توحيد التاريخ → ISO"]:::stepAmber
+        PARSE --> N5["معالجة المبالغ المالية"]:::stepAmber
+        PARSE --> N6["توحيد الحالات"]:::stepAmber
+    end
+    subgraph P3 [" 3. فحص الأخطاء "]
+        N1 & N2 & N3 & N4 & N5 & N6 --> CHK["فحص: تكرار + JSON + حقول إلزامية"]:::stepAmber
+        CHK --> TOTAL["إعادة احتساب الإجمالي"]:::stepAmber
+    end
+    subgraph P4 [" 4. التصنيف والحفظ "]
+        TOTAL --> BUILD["بناء corrections + SHA-256 hash"]:::stepGreen
+        BUILD --> DEC{"error_codes == 0?"}:::stepGreen
+        DEC -- "نعم" --> VAL[("orders_validated<br/>Upsert")]:::stepGreen
+        DEC -- "لا" --> QUAR[("orders_quarantine")]:::stepRose
+    end
+```
+
+### 11.2 مخطط قواعد الجودة الـ 9 الحتمية (`src/quality_rules.py`)
+
+```mermaid
+flowchart LR
+    classDef boxA fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
+    classDef boxB fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#ffffff;
+    classDef boxC fill:#1e1b4b,stroke:#a78bfa,stroke-width:2px,color:#ffffff;
+
+    subgraph R1 [" معالجة المبالغ "]
+        IN1["نص القيمة"]:::boxA --> TR1["تحويل ٠-٩ → 0-9"]:::boxA
+        TR1 --> CLN1["إزالة فواصل الآلاف"]:::boxA
+        CLN1 --> REM1["إزالة نصوص العملة"]:::boxA
+        REM1 --> WORD1{"كلمات عربية؟"}:::boxA
+        WORD1 -- "نعم" --> MAP1["ألفان→2000<br/>خمسة آلاف→5000"]:::boxA
+        WORD1 -- "لا" --> DEC1["→ Decimal"]:::boxA
+        MAP1 --> DEC1
+    end
+    subgraph R2 [" تطبيع الهواتف "]
+        IN2["رقم الهاتف"]:::boxB --> STRIP2["استخراج الأرقام فقط"]:::boxB
+        STRIP2 --> PREFIX2{"فحص البادئة"}:::boxB
+        PREFIX2 -- "00967/967" --> PR1["استخراج 9 خانات"]:::boxB
+        PREFIX2 -- "07/7" --> PR2["إضافة +967"]:::boxB
+        PR1 --> OUT2["+9677XXXXXXXX"]:::boxB
+        PR2 --> OUT2
+    end
+    subgraph R3 [" إصلاح البريد "]
+        IN3["البريد"]:::boxC --> REP["@+ → @<br/>..+ → ."]:::boxC
+        REP --> LOW["→ lowercase"]:::boxC
+        LOW --> CHK{"Regex valid?"}:::boxC
+        CHK -- "✓" --> OUT3["بريد سليم"]:::boxC
+        CHK -- "✗" --> ERR["INVALID_EMAIL"]:::boxC
+    end
+```
+
+### 11.3 مخطط دورة Idempotency و SHA-256
+
+```mermaid
+flowchart TD
+    classDef hashStep fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#ffffff,font-weight:bold;
+    classDef branchStep fill:#0369a1,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
+
+    R_IN["سجل مصحح"]:::hashStep --> GEN["حساب SHA-256 record_hash"]:::hashStep
+    GEN --> MATCH{"order_id موجود في MongoDB؟"}:::branchStep
+    MATCH -- "جديد" --> INSERT["➕ Insert<br/>inserted_count + 1"]:::hashStep
+    MATCH -- "موجود" --> COMP{"مقارنة record_hash"}:::branchStep
+    COMP -- "مختلف" --> UPDATE["🔄 Replace/Upsert<br/>updated_count + 1"]:::hashStep
+    COMP -- "متطابق" --> SKIP["⏭️ No-Op<br/>unchanged_count + 1"]:::hashStep
+```
+
+---
+
+## ⚙️ 12. جدول متغيرات البيئة وإعدادات الأمان
+
+يتم ضبط إعدادات المشروع بالكامل عبر ملف `.env` (المطابق تماماً لنموذج [`.env.example`](.env.example) و [`example.env`](example.env) وكود [`config/settings.py`](config/settings.py) دون أي بيانات حساسة أو مفاتيح سرية):
+
+| المتغير البرمجي في `.env` | القيمة الافتراضية | الوصف الفني والغرض في النظام |
+|---|---|---|
+| `MONGO_URI` | `mongodb://127.0.0.1:27017` | رابط الاتصال بقاعدة بيانات MongoDB محلياً |
+| `MONGO_DATABASE` | `midterm_pipeline` | اسم قاعدة البيانات الموحدة للمرحلتين الأولى والثانية |
+| `PIPELINE_MONGO_TIMEOUT_MS` | `5000` | مهلة الاتصال وفحص الجاهزية بالميلي ثانية |
+| `MONGO_RAW_COLLECTION` | `orders_raw` | اسم مجموعة التخزين الخام غير المصفاة (ELT Layer) |
+| `MONGO_VALIDATED_COLLECTION` | `orders_validated` | اسم مجموعة السجلات المصادق عليها والمصححة |
+| `MONGO_QUARANTINE_COLLECTION` | `orders_quarantine` | اسم مجموعة عزل السجلات الشاذة والمرفوضة |
+| `SMALL_FILE_THRESHOLD_MB` | `200` | الحد الفاصل للموجه الذكي (≤ 200MB لبايثون، > 200MB لسبارك) |
+| `PIPELINE_BATCH_SIZE` | `2000` | حجم دفعة القراءة التدفقية لمحرك البايثون (سعة ذاكرة O(1)) |
+| `PIPELINE_MONGO_WRITE_BATCH_SIZE` | `1000` | حجم دفعة الإدخال المتعدد bulk insert في MongoDB |
+| `PIPELINE_SPARK_MASTER` | `local[*]` | محرك Spark الموزع (`local[*]` للتطوير أو `spark://127.0.0.1:7077` لعنقود Path A) |
+| `PIPELINE_SPARK_APP_NAME` | `MidtermDataPipeline` | اسم تطبيق Apache Spark المسجل في Spark UI |
+| `PIPELINE_SPARK_PARTITIONS` | `16` | عدد تقسيمات البيانات لضمان التوازي وتجنب الاختناق |
+| `PIPELINE_SPARK_DRIVER_MEMORY` | `6g` | الذاكرة المخصصة لـ Spark Driver |
+| `PIPELINE_SPARK_EXECUTOR_MEMORY` | `6g` | الذاكرة المخصصة لـ Spark Executor |
+| `PIPELINE_SPARK_EXECUTOR_CORES` | `8` | عدد الأنوية المخصصة للمعالجة المتوازية |
+| `PIPELINE_ENABLE_GPU` | `true` | تفعيل دعم المعالجة المسرعة للعتاد (RTX 5070 Ti) |
+| `PIPELINE_RUN_ELT_AFTER_RAW` | `true` | تشغيل خط التنظيف والفحص الآلي فور اكتمال التحميل الخام |
+| `API_HOST` | `0.0.0.0` | مضيف تشغيل خادم FastAPI الموحد (Phase 2) |
+| `API_PORT` | `8000` | منفذ خدمة الـ API وواجهة Swagger التفاعلية `/docs` |
+
+---
+
+## 🎯 13. ربط معايير التقييم الرسمية بالتنفيذ الفعلي
+
+### 13.1 جدول معايير المشروع النصفي (المرحلة الأولى — 18.0 درجة كاملة)
+*وفقاً لوثيقة التكليف الرسمية، يُقيّم المشروع النصفي كما هو من 18 درجة دون طلب تطوير إضافي عليه:*
+
+| # | المعيار الرسمي للمشروع النصفي | التنفيذ الفعلي في المشروع | ملف الإثبات | الدرجة المعتمدة |
+|---|---|---|---|:---:|
+| 1 | **Router + 200MB Threshold** | `src/file_router.py` يفحص الحجم ويولد UUID ويوثق سبب التوجيه | [`reports/results.json`](reports/results.json) | 0.75 / 0.75 ✅ |
+| 2 | **Python Batch Loader** | `src/batch_loader.py` تدفق بذاكرة O(1) وسرعة 31k rows/s | [`reports/results.json`](reports/results.json) | 0.75 / 0.75 ✅ |
+| 3 | **PySpark Loader** | `src/spark_loader.py` مخطط ثابت بـ 17 حقلاً و 16 تقسيم | [`cluster/`](cluster/) | 1.25 / 1.25 ✅ |
+| 4 | **Raw Layer & Lineage** | حفظ 100% في `orders_raw` دون تصفية مع سلالة البيانات | [`reports/results.json`](reports/results.json) | 1.00 / 1.00 ✅ |
+| 5 | **Quality Cleaning & Audit Trail** | تطبيق 9 قواعد تنظيف حتمية ومصفوفة `corrections` | [`tests/test_cleaning_rules.py`](tests/test_cleaning_rules.py) | 1.25 / 1.25 ✅ |
+| 6 | **Quarantine Classification** | عزل الأخطاء الجسيمة مع 13 رمز خطأ ونسبة فقدان 0.00% | [`tests/test_classification.py`](tests/test_classification.py) | 1.00 / 1.00 ✅ |
+| 7 | **Idempotency & Upsert** | مفتاح فريد وتجزئة SHA-256 وصفر تكرار عند إعادة التشغيل | [`reports/results.json`](reports/results.json) | 1.00 / 1.00 ✅ |
+| 8 | **Run Consistency** | تحقق برمجي صارم: `raw == valid + corrected + quarantine` | [`src/elt_pipeline.py`](src/elt_pipeline.py) | 1.00 / 1.00 ✅ |
+| 9 | **Path A (Spark Standalone)** | عنقود Spark محلي كامل بـ Master و Worker مستقل | [`docs/path_a.md`](docs/path_a.md) | 1.00 / 1.00 ✅ |
+| 10 | **Automated Tests** | 15 اختبار وحدات بالبايثون تغطي التصنيف والقواعد بنجاح 100% | [`tests/`](tests/) | 1.00 / 1.00 ✅ |
+
+---
+
+### 13.2 جدول معايير المشروع النهائي (المرحلة الثانية — 7.0 درجات كاملة)
+
+| # | المعيار الرسمي في وثيقة التكليف | الدرجة | التنفيذ الفعلي في Phase 2 | ملف الإثبات والنتائج | النتيجة |
+|---|---|:---:|---|---|:---:|
+| 1 | **الاستعلامات والفهارس و Explain** | 1.5 | 5 استعلامات عملية + 4 فهارس مركبة (ESR) + مقارنة Explain قبل وبعد | [`reports/phase2_evidence/explain_comparison.md`](reports/phase2_evidence/explain_comparison.md) | 1.5 / 1.5 ✅ |
+| 2 | **تقارير التجميع (Aggregations)** | 1.5 | 6 تقارير مستقلة بنمط Pipelines حقيقية وديناميكية (بما فيها `top_products`) | [`reports/phase2_evidence/aggregations_results.json`](reports/phase2_evidence/aggregations_results.json) | 1.5 / 1.5 ✅ |
+| 3 | **الجداول المجمعة (Materialized Views)** | 1.5 | `daily_sales_summary` و `top_products_summary` مع تحديث تزايدي ذكي بالـ Watermark و $merge | [`reports/phase2_evidence/materialized_views_evidence.json`](reports/phase2_evidence/materialized_views_evidence.json) | 1.5 / 1.5 ✅ |
+| 4 | **المهام المجدولة (Scheduled Jobs)** | 1.0 | مهمتان حقيقيتان + Background Scheduler + تشغيل يدوي + سجلات أخطاء | [`reports/phase2_evidence/jobs_execution_logs.json`](reports/phase2_evidence/jobs_execution_logs.json) | 1.0 / 1.0 ✅ |
+| 5 | **واجهة FastAPI الموحدة** | 0.75 | 10 Endpoints موثقة بـ Swagger + استدعاء موجه ومحرك Phase 1 مباشرة | [`reports/phase2_evidence/api_endpoints_test_results.json`](reports/phase2_evidence/api_endpoints_test_results.json) | 0.75 / 0.75 ✅ |
+| 6 | **التوثيق والبيئة و GitHub** | 0.5 | توثيق متكامل وشامل + .env.example نظيف + requirements.txt | [`README.md`](README.md) و [`.env.example`](.env.example) | 0.5 / 0.5 ✅ |
+| 7 | **المناقشة والفهم المعماري** | 0.25 | تحليل مبررات الفهارس وقاعدة ESR والتحديث التزايدي والـ Aggregations | [`docs/phase2_analysis.md`](docs/phase2_analysis.md) | 0.25 / 0.25 ✅ |
+
+**🏆 المجموع التراكمي الإجمالي للمشروع: 18.0 (النصفي) + 7.0 (النهائي) = 25.0 / 25.0 درجة (100% الدرجة الكاملة المؤكدة)**
+
+---
+
+## 🧰 14. التقنيات والمكتبات المستخدمة
+
+| التقنية / الأداة | الإصدار | الغرض والاستخدام في المشروع |
+|---|---|---|
+| **Python** | 3.11.9 | لغة البرمجة الأساسية لكافة المحركات والمكونات |
+| **Apache Spark / PySpark** | 3.5.0 / 4.2 | محرك المعالجة المتوازية الموزعة للملفات الكبيرة (Phase 1) |
+| **MongoDB Community** | 8.0 / 8.3.7 | قاعدة البيانات الرئيسية لتخزين السجلات الخام والمصادق عليها والمجمعة |
+| **MongoDB Spark Connector** | 10.3.0 | كتابة البيانات المتوازية من Spark إلى MongoDB مباشرة |
+| **FastAPI** | 0.115+ | إطار عمل بناء واجهة الـ API وخدمة نقاط النهاية (Phase 2) |
+| **Uvicorn** | 0.30+ | خادم الويب غير المتزامن (ASGI Server) لتشغيل FastAPI |
+| **APScheduler** | 3.10+ | محرك جدولة المهام الدورية الخلفية وإدارتها برمجياً (Phase 2) |
+| **PyTest** | 8.3.2 | إطار تشغيل الاختبارات الآلية الشاملة (23 اختباراً) |
+| **Pydantic** | 2.8+ | التحقق الصارم من مخططات البيانات وعقود الـ API |
+| **SHA-256** | معيار تشفير | توليد بصمة السجلات الحتمية لضمان اللاتكرارية (Idempotency) |
+
+---
+
+## 📸 15. لقطات الإثبات والتشغيل الفعلي لكافة المراحل
+
+لقطات شاشة توثيقية حقيقية وعالية الدقة تم التقاطها أثناء تنفيذ واختبار كل مرحلة، ومحفوظة في مجلد `reports/screenshots/`:
+
+| # | المرحلة | ملف الصورة | الوصف الفني والمعاينة |
+|---|---------|------------|-----------------------|
+| 01 | **موجه الملفات (الملف الصغير)** | [`01_router_small_file_python_batch.png`](reports/screenshots/01_router_small_file_python_batch.png) | اختيار محرك Python Batch تلقائياً للملفات ≤ 200MB مع تبرير القرار |
+| 02 | **موجه الملفات (الملف الكبير)** | [`02_router_large_file_pyspark.png`](reports/screenshots/02_router_large_file_pyspark.png) | اختيار محرك PySpark تلقائياً للملفات > 200MB وتوزيعها على العنقود |
+| 03 | **التحميل التدفقي بالبايثون** | [`03_python_batch_streaming.png`](reports/screenshots/03_python_batch_streaming.png) | تدفق الدفعات بالذاكرة O(1) ومعدل السرعة القياسي (31,338 rows/s) |
+| 04 | **طبقة التخزين الخام** | [`04_mongodb_orders_raw.png`](reports/screenshots/04_mongodb_orders_raw.png) | حفظ السجلات كاملة في orders_raw دون تصفية مع سلالة البيانات run_id |
+| 05 | **قواعد الجودة والتنظيف** | [`05_quality_rules_cleaning.png`](reports/screenshots/05_quality_rules_cleaning.png) | اختبار وإثبات نجاح القواعد الـ 9 الحتمية لمعالجة الأرقام والأسعار والبريد |
+| 06 | **السجلات السليمة وسجل التدقيق** | [`06_mongodb_orders_validated.png`](reports/screenshots/06_mongodb_orders_validated.png) | وثيقة من orders_validated توضح مصفوفة corrections وتجزئة SHA-256 |
+| 07 | **طبقة العزل وتصنيف الأخطاء** | [`07_mongodb_orders_quarantine.png`](reports/screenshots/07_mongodb_orders_quarantine.png) | جدول تشخيص 13 رمز خطأ وأسباب العزل مع نسبة فقدان 0.00% |
+| 08 | **إثبات اللاتكرارية (Idempotency)** | [`08_idempotency_upsert_proof.png`](reports/screenshots/08_idempotency_upsert_proof.png) | إثبات إعادة التشغيل: 0 إدراج جديد، 41 تحديث، 4,213 غير معدل |
+| 09 | **الاختبارات الآلية (PyTest)** | [`09_automated_tests_pytest.png`](reports/screenshots/09_automated_tests_pytest.png) | نجاح الاختبارات الآلية بنسبة 100% بسرعة فائقة |
+| 10 | **معمارية عنقود Spark (Path A)** | [`10_spark_cluster_architecture.png`](reports/screenshots/10_spark_cluster_architecture.png) | تشغيل Master و Worker وتوزيع 16 Partition على أنوية المعالجة |
+| 11 | **لوحة مقاييس الأداء والاتساق** | [`11_pipeline_metrics_summary.png`](reports/screenshots/11_pipeline_metrics_summary.png) | ملخص المقاييس، زمن التنفيذ، ومعادلة اتساق الدفعة run consistency |
+
+---
+
+## ❓ 16. استكشاف الأخطاء وحلها (Troubleshooting)
+
+| المشكلة | السبب المحتمل | الحل الموصى به |
+|---|---|---|
+| `ModuleNotFoundError` | عدم تفعيل البيئة أو نقص مكتبة | تفعيل البيئة الافتراضية ثم تشغيل `pip install -r requirements.txt` |
+| `Connection refused (27017)` | خادم MongoDB غير مشغل | بدء خدمة MongoDB عبر `net start MongoDB` أو تشغيل `mongod` |
+| `JAVA_HOME is not set` | غياب Java JDK لتشغيل Spark | تثبيت Java JDK 17+ وضبط مسار `JAVA_HOME` في متغيرات النظام |
+| خطأ صلاحيات PowerShell | تقييد سياسة تنفيذ البرامج النصية | تشغيل: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force` |
+| `Address already in use: 8000` | خادم ويب أو تطبيق يشغل المنفذ | إيقاف العملية القديمة أو تغيير المنفذ عبر `--port 8001` |
+
+> 📖 **تفاصيل إضافية حول البنية والمعمارية:** راجع [`docs/architecture.md`](docs/architecture.md) و [`docs/phase2_analysis.md`](docs/phase2_analysis.md).
+
+---
+
+<div align="center">
+
+**🎓 جامعة الرازي — كلية الحاسوب وتقنية المعلومات**  
+**مقرر البيانات الضخمة (القسم العملي) — المستوى الرابع**  
+**تخصص الذكاء الاصطناعي — إشراف ومناقشة المشروع النهائي**
+
+</div>

@@ -1,0 +1,1397 @@
+[
+  {
+    "query_name": "orders_by_city_status",
+    "parameters": {
+      "city": "صنعاء",
+      "status": "تم الدفع",
+      "limit": 50
+    },
+    "before_index": {
+      "executionSuccess": true,
+      "nReturned": 50,
+      "executionTimeMillis": 1,
+      "totalKeysExamined": 0,
+      "totalDocsExamined": 1380,
+      "stage": "COLLSCAN → SORT",
+      "primaryScan": "COLLSCAN",
+      "stages": [
+        "PROJECTION_SIMPLE",
+        "SORT",
+        "COLLSCAN"
+      ],
+      "indexName": null
+    },
+    "after_index": {
+      "executionSuccess": true,
+      "nReturned": 50,
+      "executionTimeMillis": 6,
+      "totalKeysExamined": 50,
+      "totalDocsExamined": 50,
+      "stage": "IXSCAN → FETCH → LIMIT",
+      "primaryScan": "IXSCAN",
+      "stages": [
+        "LIMIT",
+        "PROJECTION_SIMPLE",
+        "FETCH",
+        "IXSCAN"
+      ],
+      "indexName": "idx_city_status_total_amount"
+    },
+    "performance_gain": {
+      "time_saved_ms": -5,
+      "docs_examined_reduction": 1330,
+      "docs_ratio": 27.6,
+      "stage_transition": "COLLSCAN → SORT -> IXSCAN → FETCH → LIMIT"
+    },
+    "raw_explain_before": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "midterm_pipeline.orders_validated",
+        "parsedQuery": {
+          "$and": [
+            {
+              "city": {
+                "$eq": "صنعاء"
+              }
+            },
+            {
+              "status": {
+                "$eq": "تم الدفع"
+              }
+            }
+          ]
+        },
+        "indexFilterSet": false,
+        "queryHash": "1BC22209",
+        "planCacheShapeHash": "1BC22209",
+        "planCacheKey": "EB22EFFA",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "prunedSimilarIndexes": false,
+        "winningPlan": {
+          "isCached": false,
+          "stage": "PROJECTION_SIMPLE",
+          "transformBy": {
+            "_id": 0,
+            "order_id": 1,
+            "customer_id": 1,
+            "city": 1,
+            "status": 1,
+            "total_amount": 1,
+            "payment_method": 1
+          },
+          "inputStage": {
+            "stage": "SORT",
+            "sortPattern": {
+              "city": 1,
+              "status": 1,
+              "total_amount": -1
+            },
+            "memLimit": 104857600,
+            "limitAmount": 50,
+            "type": "simple",
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "$and": [
+                  {
+                    "city": {
+                      "$eq": "صنعاء"
+                    }
+                  },
+                  {
+                    "status": {
+                      "$eq": "تم الدفع"
+                    }
+                  }
+                ]
+              },
+              "nss": "midterm_pipeline.orders_validated",
+              "direction": "forward"
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 50,
+        "executionTimeMillis": 1,
+        "totalKeysExamined": 0,
+        "totalDocsExamined": 1380,
+        "executionStages": {
+          "isCached": false,
+          "stage": "PROJECTION_SIMPLE",
+          "nReturned": 50,
+          "executionTimeMillisEstimate": 0,
+          "works": 1432,
+          "advanced": 50,
+          "needTime": 1381,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "transformBy": {
+            "_id": 0,
+            "order_id": 1,
+            "customer_id": 1,
+            "city": 1,
+            "status": 1,
+            "total_amount": 1,
+            "payment_method": 1
+          },
+          "inputStage": {
+            "stage": "SORT",
+            "nReturned": 50,
+            "executionTimeMillisEstimate": 0,
+            "works": 1432,
+            "advanced": 50,
+            "needTime": 1381,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 1,
+            "sortPattern": {
+              "city": 1,
+              "status": 1,
+              "total_amount": -1
+            },
+            "memLimit": 104857600,
+            "limitAmount": 50,
+            "type": "simple",
+            "totalDataSizeSorted": 111068,
+            "usedDisk": false,
+            "spills": 0,
+            "spilledRecords": 0,
+            "spilledBytes": 0,
+            "spilledDataStorageSize": 0,
+            "peakTrackedMemBytes": 112183,
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "$and": [
+                  {
+                    "city": {
+                      "$eq": "صنعاء"
+                    }
+                  },
+                  {
+                    "status": {
+                      "$eq": "تم الدفع"
+                    }
+                  }
+                ]
+              },
+              "nReturned": 66,
+              "executionTimeMillisEstimate": 0,
+              "works": 1381,
+              "advanced": 66,
+              "needTime": 1314,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 1,
+              "nss": "midterm_pipeline.orders_validated",
+              "direction": "forward",
+              "docsExamined": 1380
+            }
+          }
+        },
+        "allPlansExecution": []
+      },
+      "queryShapeHash": "F7E6917AECD55E3D78F6A30F6792AEEBA1D8BF714FAE85943DE1BEBAEA9CD3FD",
+      "command": {
+        "find": "orders_validated",
+        "filter": {
+          "city": "صنعاء",
+          "status": "تم الدفع"
+        },
+        "sort": {
+          "city": 1,
+          "status": 1,
+          "total_amount": -1
+        },
+        "projection": {
+          "_id": 0,
+          "order_id": 1,
+          "customer_id": 1,
+          "city": 1,
+          "status": 1,
+          "total_amount": 1,
+          "payment_method": 1
+        },
+        "limit": 50,
+        "singleBatch": true,
+        "$db": "midterm_pipeline"
+      },
+      "serverInfo": {
+        "host": "Q9",
+        "port": 27017,
+        "version": "8.3.7",
+        "gitVersion": "34eee04f34989abb7a3d91447976f033f4f74af2"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalQueryFrameworkControl": "trySbeRestricted",
+        "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+      },
+      "ok": 1.0
+    },
+    "raw_explain_after": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "midterm_pipeline.orders_validated",
+        "parsedQuery": {
+          "$and": [
+            {
+              "city": {
+                "$eq": "صنعاء"
+              }
+            },
+            {
+              "status": {
+                "$eq": "تم الدفع"
+              }
+            }
+          ]
+        },
+        "indexFilterSet": false,
+        "queryHash": "1BC22209",
+        "planCacheShapeHash": "1BC22209",
+        "planCacheKey": "9E420A6A",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "prunedSimilarIndexes": false,
+        "winningPlan": {
+          "isCached": false,
+          "stage": "LIMIT",
+          "limitAmount": 50,
+          "inputStage": {
+            "stage": "PROJECTION_SIMPLE",
+            "transformBy": {
+              "_id": 0,
+              "order_id": 1,
+              "customer_id": 1,
+              "city": 1,
+              "status": 1,
+              "total_amount": 1,
+              "payment_method": 1
+            },
+            "inputStage": {
+              "stage": "FETCH",
+              "nss": "midterm_pipeline.orders_validated",
+              "inputStage": {
+                "stage": "IXSCAN",
+                "nss": "midterm_pipeline.orders_validated",
+                "keyPattern": {
+                  "city": 1,
+                  "status": 1,
+                  "total_amount": -1
+                },
+                "indexName": "idx_city_status_total_amount",
+                "isMultiKey": false,
+                "multiKeyPaths": {
+                  "city": [],
+                  "status": [],
+                  "total_amount": []
+                },
+                "isUnique": false,
+                "isSparse": false,
+                "isPartial": false,
+                "indexVersion": 2,
+                "direction": "forward",
+                "indexBounds": {
+                  "city": [
+                    "[\"صنعاء\", \"صنعاء\"]"
+                  ],
+                  "status": [
+                    "[\"تم الدفع\", \"تم الدفع\"]"
+                  ],
+                  "total_amount": [
+                    "[MaxKey, MinKey]"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 50,
+        "executionTimeMillis": 6,
+        "totalKeysExamined": 50,
+        "totalDocsExamined": 50,
+        "executionStages": {
+          "isCached": false,
+          "stage": "LIMIT",
+          "nReturned": 50,
+          "executionTimeMillisEstimate": 5,
+          "works": 51,
+          "advanced": 50,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "limitAmount": 50,
+          "inputStage": {
+            "stage": "PROJECTION_SIMPLE",
+            "nReturned": 50,
+            "executionTimeMillisEstimate": 5,
+            "works": 50,
+            "advanced": 50,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 0,
+            "transformBy": {
+              "_id": 0,
+              "order_id": 1,
+              "customer_id": 1,
+              "city": 1,
+              "status": 1,
+              "total_amount": 1,
+              "payment_method": 1
+            },
+            "inputStage": {
+              "stage": "FETCH",
+              "nReturned": 50,
+              "executionTimeMillisEstimate": 5,
+              "works": 50,
+              "advanced": 50,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 0,
+              "nss": "midterm_pipeline.orders_validated",
+              "docsExamined": 50,
+              "alreadyHasObj": 0,
+              "inputStage": {
+                "stage": "IXSCAN",
+                "nReturned": 50,
+                "executionTimeMillisEstimate": 5,
+                "works": 50,
+                "advanced": 50,
+                "needTime": 0,
+                "needYield": 0,
+                "saveState": 0,
+                "restoreState": 0,
+                "isEOF": 0,
+                "nss": "midterm_pipeline.orders_validated",
+                "keyPattern": {
+                  "city": 1,
+                  "status": 1,
+                  "total_amount": -1
+                },
+                "indexName": "idx_city_status_total_amount",
+                "isMultiKey": false,
+                "multiKeyPaths": {
+                  "city": [],
+                  "status": [],
+                  "total_amount": []
+                },
+                "isUnique": false,
+                "isSparse": false,
+                "isPartial": false,
+                "indexVersion": 2,
+                "direction": "forward",
+                "indexBounds": {
+                  "city": [
+                    "[\"صنعاء\", \"صنعاء\"]"
+                  ],
+                  "status": [
+                    "[\"تم الدفع\", \"تم الدفع\"]"
+                  ],
+                  "total_amount": [
+                    "[MaxKey, MinKey]"
+                  ]
+                },
+                "keysExamined": 50,
+                "seeks": 1,
+                "dupsTested": 0,
+                "dupsDropped": 0,
+                "peakTrackedMemBytes": 0
+              }
+            }
+          }
+        },
+        "allPlansExecution": []
+      },
+      "queryShapeHash": "F7E6917AECD55E3D78F6A30F6792AEEBA1D8BF714FAE85943DE1BEBAEA9CD3FD",
+      "command": {
+        "find": "orders_validated",
+        "filter": {
+          "city": "صنعاء",
+          "status": "تم الدفع"
+        },
+        "sort": {
+          "city": 1,
+          "status": 1,
+          "total_amount": -1
+        },
+        "projection": {
+          "_id": 0,
+          "order_id": 1,
+          "customer_id": 1,
+          "city": 1,
+          "status": 1,
+          "total_amount": 1,
+          "payment_method": 1
+        },
+        "limit": 50,
+        "singleBatch": true,
+        "$db": "midterm_pipeline"
+      },
+      "serverInfo": {
+        "host": "Q9",
+        "port": 27017,
+        "version": "8.3.7",
+        "gitVersion": "34eee04f34989abb7a3d91447976f033f4f74af2"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalQueryFrameworkControl": "trySbeRestricted",
+        "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+      },
+      "ok": 1.0
+    }
+  },
+  {
+    "query_name": "orders_by_customer",
+    "parameters": {
+      "customer_id": "CUST-0000",
+      "limit": 50
+    },
+    "before_index": {
+      "executionSuccess": true,
+      "nReturned": 1,
+      "executionTimeMillis": 1,
+      "totalKeysExamined": 0,
+      "totalDocsExamined": 1380,
+      "stage": "COLLSCAN → SORT",
+      "primaryScan": "COLLSCAN",
+      "stages": [
+        "PROJECTION_SIMPLE",
+        "SORT",
+        "COLLSCAN"
+      ],
+      "indexName": null
+    },
+    "after_index": {
+      "executionSuccess": true,
+      "nReturned": 1,
+      "executionTimeMillis": 6,
+      "totalKeysExamined": 1,
+      "totalDocsExamined": 1,
+      "stage": "IXSCAN → FETCH → LIMIT",
+      "primaryScan": "IXSCAN",
+      "stages": [
+        "LIMIT",
+        "PROJECTION_SIMPLE",
+        "FETCH",
+        "IXSCAN"
+      ],
+      "indexName": "idx_customer_id_order_date"
+    },
+    "performance_gain": {
+      "time_saved_ms": -5,
+      "docs_examined_reduction": 1379,
+      "docs_ratio": 1380.0,
+      "stage_transition": "COLLSCAN → SORT -> IXSCAN → FETCH → LIMIT"
+    },
+    "raw_explain_before": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "midterm_pipeline.orders_validated",
+        "parsedQuery": {
+          "customer_id": {
+            "$eq": "CUST-0000"
+          }
+        },
+        "indexFilterSet": false,
+        "queryHash": "FCF3D530",
+        "planCacheShapeHash": "FCF3D530",
+        "planCacheKey": "5F72A8EE",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "prunedSimilarIndexes": false,
+        "winningPlan": {
+          "isCached": false,
+          "stage": "PROJECTION_SIMPLE",
+          "transformBy": {
+            "_id": 0,
+            "order_id": 1,
+            "customer_id": 1,
+            "order_date": 1,
+            "status": 1,
+            "total_amount": 1,
+            "city": 1
+          },
+          "inputStage": {
+            "stage": "SORT",
+            "sortPattern": {
+              "customer_id": 1,
+              "order_date": -1
+            },
+            "memLimit": 104857600,
+            "limitAmount": 50,
+            "type": "simple",
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "customer_id": {
+                  "$eq": "CUST-0000"
+                }
+              },
+              "nss": "midterm_pipeline.orders_validated",
+              "direction": "forward"
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 1,
+        "executionTimeMillis": 1,
+        "totalKeysExamined": 0,
+        "totalDocsExamined": 1380,
+        "executionStages": {
+          "isCached": false,
+          "stage": "PROJECTION_SIMPLE",
+          "nReturned": 1,
+          "executionTimeMillisEstimate": 0,
+          "works": 1383,
+          "advanced": 1,
+          "needTime": 1381,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "transformBy": {
+            "_id": 0,
+            "order_id": 1,
+            "customer_id": 1,
+            "order_date": 1,
+            "status": 1,
+            "total_amount": 1,
+            "city": 1
+          },
+          "inputStage": {
+            "stage": "SORT",
+            "nReturned": 1,
+            "executionTimeMillisEstimate": 0,
+            "works": 1383,
+            "advanced": 1,
+            "needTime": 1381,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 1,
+            "sortPattern": {
+              "customer_id": 1,
+              "order_date": -1
+            },
+            "memLimit": 104857600,
+            "limitAmount": 50,
+            "type": "simple",
+            "totalDataSizeSorted": 1675,
+            "usedDisk": false,
+            "spills": 0,
+            "spilledRecords": 0,
+            "spilledBytes": 0,
+            "spilledDataStorageSize": 0,
+            "peakTrackedMemBytes": 1675,
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "customer_id": {
+                  "$eq": "CUST-0000"
+                }
+              },
+              "nReturned": 1,
+              "executionTimeMillisEstimate": 0,
+              "works": 1381,
+              "advanced": 1,
+              "needTime": 1379,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 1,
+              "nss": "midterm_pipeline.orders_validated",
+              "direction": "forward",
+              "docsExamined": 1380
+            }
+          }
+        },
+        "allPlansExecution": []
+      },
+      "queryShapeHash": "6172561DC3DB46DF5C2956275B3AF99DCA316B5AED9CB567591BBFCA6E4044A3",
+      "command": {
+        "find": "orders_validated",
+        "filter": {
+          "customer_id": "CUST-0000"
+        },
+        "sort": {
+          "customer_id": 1,
+          "order_date": -1
+        },
+        "projection": {
+          "_id": 0,
+          "order_id": 1,
+          "customer_id": 1,
+          "order_date": 1,
+          "status": 1,
+          "total_amount": 1,
+          "city": 1
+        },
+        "limit": 50,
+        "singleBatch": true,
+        "$db": "midterm_pipeline"
+      },
+      "serverInfo": {
+        "host": "Q9",
+        "port": 27017,
+        "version": "8.3.7",
+        "gitVersion": "34eee04f34989abb7a3d91447976f033f4f74af2"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalQueryFrameworkControl": "trySbeRestricted",
+        "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+      },
+      "ok": 1.0
+    },
+    "raw_explain_after": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "midterm_pipeline.orders_validated",
+        "parsedQuery": {
+          "customer_id": {
+            "$eq": "CUST-0000"
+          }
+        },
+        "indexFilterSet": false,
+        "queryHash": "FCF3D530",
+        "planCacheShapeHash": "FCF3D530",
+        "planCacheKey": "20F393C9",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "prunedSimilarIndexes": false,
+        "winningPlan": {
+          "isCached": false,
+          "stage": "LIMIT",
+          "limitAmount": 50,
+          "inputStage": {
+            "stage": "PROJECTION_SIMPLE",
+            "transformBy": {
+              "_id": 0,
+              "order_id": 1,
+              "customer_id": 1,
+              "order_date": 1,
+              "status": 1,
+              "total_amount": 1,
+              "city": 1
+            },
+            "inputStage": {
+              "stage": "FETCH",
+              "nss": "midterm_pipeline.orders_validated",
+              "inputStage": {
+                "stage": "IXSCAN",
+                "nss": "midterm_pipeline.orders_validated",
+                "keyPattern": {
+                  "customer_id": 1,
+                  "order_date": -1
+                },
+                "indexName": "idx_customer_id_order_date",
+                "isMultiKey": false,
+                "multiKeyPaths": {
+                  "customer_id": [],
+                  "order_date": []
+                },
+                "isUnique": false,
+                "isSparse": false,
+                "isPartial": false,
+                "indexVersion": 2,
+                "direction": "forward",
+                "indexBounds": {
+                  "customer_id": [
+                    "[\"CUST-0000\", \"CUST-0000\"]"
+                  ],
+                  "order_date": [
+                    "[MaxKey, MinKey]"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 1,
+        "executionTimeMillis": 6,
+        "totalKeysExamined": 1,
+        "totalDocsExamined": 1,
+        "executionStages": {
+          "isCached": false,
+          "stage": "LIMIT",
+          "nReturned": 1,
+          "executionTimeMillisEstimate": 6,
+          "works": 2,
+          "advanced": 1,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "limitAmount": 50,
+          "inputStage": {
+            "stage": "PROJECTION_SIMPLE",
+            "nReturned": 1,
+            "executionTimeMillisEstimate": 6,
+            "works": 2,
+            "advanced": 1,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 1,
+            "transformBy": {
+              "_id": 0,
+              "order_id": 1,
+              "customer_id": 1,
+              "order_date": 1,
+              "status": 1,
+              "total_amount": 1,
+              "city": 1
+            },
+            "inputStage": {
+              "stage": "FETCH",
+              "nReturned": 1,
+              "executionTimeMillisEstimate": 6,
+              "works": 2,
+              "advanced": 1,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 1,
+              "nss": "midterm_pipeline.orders_validated",
+              "docsExamined": 1,
+              "alreadyHasObj": 0,
+              "inputStage": {
+                "stage": "IXSCAN",
+                "nReturned": 1,
+                "executionTimeMillisEstimate": 6,
+                "works": 2,
+                "advanced": 1,
+                "needTime": 0,
+                "needYield": 0,
+                "saveState": 0,
+                "restoreState": 0,
+                "isEOF": 1,
+                "nss": "midterm_pipeline.orders_validated",
+                "keyPattern": {
+                  "customer_id": 1,
+                  "order_date": -1
+                },
+                "indexName": "idx_customer_id_order_date",
+                "isMultiKey": false,
+                "multiKeyPaths": {
+                  "customer_id": [],
+                  "order_date": []
+                },
+                "isUnique": false,
+                "isSparse": false,
+                "isPartial": false,
+                "indexVersion": 2,
+                "direction": "forward",
+                "indexBounds": {
+                  "customer_id": [
+                    "[\"CUST-0000\", \"CUST-0000\"]"
+                  ],
+                  "order_date": [
+                    "[MaxKey, MinKey]"
+                  ]
+                },
+                "keysExamined": 1,
+                "seeks": 1,
+                "dupsTested": 0,
+                "dupsDropped": 0,
+                "peakTrackedMemBytes": 0
+              }
+            }
+          }
+        },
+        "allPlansExecution": []
+      },
+      "queryShapeHash": "6172561DC3DB46DF5C2956275B3AF99DCA316B5AED9CB567591BBFCA6E4044A3",
+      "command": {
+        "find": "orders_validated",
+        "filter": {
+          "customer_id": "CUST-0000"
+        },
+        "sort": {
+          "customer_id": 1,
+          "order_date": -1
+        },
+        "projection": {
+          "_id": 0,
+          "order_id": 1,
+          "customer_id": 1,
+          "order_date": 1,
+          "status": 1,
+          "total_amount": 1,
+          "city": 1
+        },
+        "limit": 50,
+        "singleBatch": true,
+        "$db": "midterm_pipeline"
+      },
+      "serverInfo": {
+        "host": "Q9",
+        "port": 27017,
+        "version": "8.3.7",
+        "gitVersion": "34eee04f34989abb7a3d91447976f033f4f74af2"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalQueryFrameworkControl": "trySbeRestricted",
+        "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+      },
+      "ok": 1.0
+    }
+  },
+  {
+    "query_name": "high_value_orders_by_date",
+    "parameters": {
+      "min_amount": 3000.0,
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "limit": 50
+    },
+    "before_index": {
+      "executionSuccess": true,
+      "nReturned": 50,
+      "executionTimeMillis": 3,
+      "totalKeysExamined": 0,
+      "totalDocsExamined": 1380,
+      "stage": "COLLSCAN → SORT",
+      "primaryScan": "COLLSCAN",
+      "stages": [
+        "PROJECTION_SIMPLE",
+        "SORT",
+        "COLLSCAN"
+      ],
+      "indexName": null
+    },
+    "after_index": {
+      "executionSuccess": true,
+      "nReturned": 50,
+      "executionTimeMillis": 7,
+      "totalKeysExamined": 50,
+      "totalDocsExamined": 50,
+      "stage": "IXSCAN → FETCH → LIMIT",
+      "primaryScan": "IXSCAN",
+      "stages": [
+        "LIMIT",
+        "PROJECTION_SIMPLE",
+        "FETCH",
+        "IXSCAN"
+      ],
+      "indexName": "idx_order_date_total_amount"
+    },
+    "performance_gain": {
+      "time_saved_ms": -4,
+      "docs_examined_reduction": 1330,
+      "docs_ratio": 27.6,
+      "stage_transition": "COLLSCAN → SORT -> IXSCAN → FETCH → LIMIT"
+    },
+    "raw_explain_before": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "midterm_pipeline.orders_validated",
+        "parsedQuery": {
+          "$and": [
+            {
+              "order_date": {
+                "$lte": "2026-12-31"
+              }
+            },
+            {
+              "order_date": {
+                "$gte": "2026-01-01"
+              }
+            },
+            {
+              "total_amount": {
+                "$gte": 3000.0
+              }
+            }
+          ]
+        },
+        "indexFilterSet": false,
+        "queryHash": "8DA38FCA",
+        "planCacheShapeHash": "8DA38FCA",
+        "planCacheKey": "328488A8",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "prunedSimilarIndexes": false,
+        "winningPlan": {
+          "isCached": false,
+          "stage": "PROJECTION_SIMPLE",
+          "transformBy": {
+            "_id": 0,
+            "order_id": 1,
+            "order_date": 1,
+            "total_amount": 1,
+            "customer_name": 1,
+            "city": 1
+          },
+          "inputStage": {
+            "stage": "SORT",
+            "sortPattern": {
+              "order_date": 1,
+              "total_amount": 1
+            },
+            "memLimit": 104857600,
+            "limitAmount": 50,
+            "type": "simple",
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "$and": [
+                  {
+                    "order_date": {
+                      "$lte": "2026-12-31"
+                    }
+                  },
+                  {
+                    "order_date": {
+                      "$gte": "2026-01-01"
+                    }
+                  },
+                  {
+                    "total_amount": {
+                      "$gte": 3000.0
+                    }
+                  }
+                ]
+              },
+              "nss": "midterm_pipeline.orders_validated",
+              "direction": "forward"
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 50,
+        "executionTimeMillis": 3,
+        "totalKeysExamined": 0,
+        "totalDocsExamined": 1380,
+        "executionStages": {
+          "isCached": false,
+          "stage": "PROJECTION_SIMPLE",
+          "nReturned": 50,
+          "executionTimeMillisEstimate": 3,
+          "works": 1432,
+          "advanced": 50,
+          "needTime": 1381,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "transformBy": {
+            "_id": 0,
+            "order_id": 1,
+            "order_date": 1,
+            "total_amount": 1,
+            "customer_name": 1,
+            "city": 1
+          },
+          "inputStage": {
+            "stage": "SORT",
+            "nReturned": 50,
+            "executionTimeMillisEstimate": 3,
+            "works": 1432,
+            "advanced": 50,
+            "needTime": 1381,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 1,
+            "sortPattern": {
+              "order_date": 1,
+              "total_amount": 1
+            },
+            "memLimit": 104857600,
+            "limitAmount": 50,
+            "type": "simple",
+            "totalDataSizeSorted": 108282,
+            "usedDisk": false,
+            "spills": 0,
+            "spilledRecords": 0,
+            "spilledBytes": 0,
+            "spilledDataStorageSize": 0,
+            "peakTrackedMemBytes": 110589,
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "$and": [
+                  {
+                    "order_date": {
+                      "$lte": "2026-12-31"
+                    }
+                  },
+                  {
+                    "order_date": {
+                      "$gte": "2026-01-01"
+                    }
+                  },
+                  {
+                    "total_amount": {
+                      "$gte": 3000.0
+                    }
+                  }
+                ]
+              },
+              "nReturned": 1380,
+              "executionTimeMillisEstimate": 3,
+              "works": 1381,
+              "advanced": 1380,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 1,
+              "nss": "midterm_pipeline.orders_validated",
+              "direction": "forward",
+              "docsExamined": 1380
+            }
+          }
+        },
+        "allPlansExecution": []
+      },
+      "queryShapeHash": "0E3F8F51471CBE1D60863533F4255FA154888DB144E915F22C85F2D97B0062A7",
+      "command": {
+        "find": "orders_validated",
+        "filter": {
+          "order_date": {
+            "$gte": "2026-01-01",
+            "$lte": "2026-12-31"
+          },
+          "total_amount": {
+            "$gte": 3000.0
+          }
+        },
+        "sort": {
+          "order_date": 1,
+          "total_amount": 1
+        },
+        "projection": {
+          "_id": 0,
+          "order_id": 1,
+          "order_date": 1,
+          "total_amount": 1,
+          "customer_name": 1,
+          "city": 1
+        },
+        "limit": 50,
+        "singleBatch": true,
+        "$db": "midterm_pipeline"
+      },
+      "serverInfo": {
+        "host": "Q9",
+        "port": 27017,
+        "version": "8.3.7",
+        "gitVersion": "34eee04f34989abb7a3d91447976f033f4f74af2"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalQueryFrameworkControl": "trySbeRestricted",
+        "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+      },
+      "ok": 1.0
+    },
+    "raw_explain_after": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "midterm_pipeline.orders_validated",
+        "parsedQuery": {
+          "$and": [
+            {
+              "order_date": {
+                "$lte": "2026-12-31"
+              }
+            },
+            {
+              "order_date": {
+                "$gte": "2026-01-01"
+              }
+            },
+            {
+              "total_amount": {
+                "$gte": 3000.0
+              }
+            }
+          ]
+        },
+        "indexFilterSet": false,
+        "queryHash": "8DA38FCA",
+        "planCacheShapeHash": "8DA38FCA",
+        "planCacheKey": "B1FEF04D",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "prunedSimilarIndexes": false,
+        "winningPlan": {
+          "isCached": false,
+          "stage": "LIMIT",
+          "limitAmount": 50,
+          "inputStage": {
+            "stage": "PROJECTION_SIMPLE",
+            "transformBy": {
+              "_id": 0,
+              "order_id": 1,
+              "order_date": 1,
+              "total_amount": 1,
+              "customer_name": 1,
+              "city": 1
+            },
+            "inputStage": {
+              "stage": "FETCH",
+              "nss": "midterm_pipeline.orders_validated",
+              "inputStage": {
+                "stage": "IXSCAN",
+                "nss": "midterm_pipeline.orders_validated",
+                "keyPattern": {
+                  "order_date": 1,
+                  "total_amount": 1
+                },
+                "indexName": "idx_order_date_total_amount",
+                "isMultiKey": false,
+                "multiKeyPaths": {
+                  "order_date": [],
+                  "total_amount": []
+                },
+                "isUnique": false,
+                "isSparse": false,
+                "isPartial": false,
+                "indexVersion": 2,
+                "direction": "forward",
+                "indexBounds": {
+                  "order_date": [
+                    "[\"2026-01-01\", \"2026-12-31\"]"
+                  ],
+                  "total_amount": [
+                    "[3000.0, inf]"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 50,
+        "executionTimeMillis": 7,
+        "totalKeysExamined": 50,
+        "totalDocsExamined": 50,
+        "executionStages": {
+          "isCached": false,
+          "stage": "LIMIT",
+          "nReturned": 50,
+          "executionTimeMillisEstimate": 0,
+          "works": 51,
+          "advanced": 50,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "limitAmount": 50,
+          "inputStage": {
+            "stage": "PROJECTION_SIMPLE",
+            "nReturned": 50,
+            "executionTimeMillisEstimate": 0,
+            "works": 50,
+            "advanced": 50,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 0,
+            "transformBy": {
+              "_id": 0,
+              "order_id": 1,
+              "order_date": 1,
+              "total_amount": 1,
+              "customer_name": 1,
+              "city": 1
+            },
+            "inputStage": {
+              "stage": "FETCH",
+              "nReturned": 50,
+              "executionTimeMillisEstimate": 0,
+              "works": 50,
+              "advanced": 50,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 0,
+              "nss": "midterm_pipeline.orders_validated",
+              "docsExamined": 50,
+              "alreadyHasObj": 0,
+              "inputStage": {
+                "stage": "IXSCAN",
+                "nReturned": 50,
+                "executionTimeMillisEstimate": 0,
+                "works": 50,
+                "advanced": 50,
+                "needTime": 0,
+                "needYield": 0,
+                "saveState": 0,
+                "restoreState": 0,
+                "isEOF": 0,
+                "nss": "midterm_pipeline.orders_validated",
+                "keyPattern": {
+                  "order_date": 1,
+                  "total_amount": 1
+                },
+                "indexName": "idx_order_date_total_amount",
+                "isMultiKey": false,
+                "multiKeyPaths": {
+                  "order_date": [],
+                  "total_amount": []
+                },
+                "isUnique": false,
+                "isSparse": false,
+                "isPartial": false,
+                "indexVersion": 2,
+                "direction": "forward",
+                "indexBounds": {
+                  "order_date": [
+                    "[\"2026-01-01\", \"2026-12-31\"]"
+                  ],
+                  "total_amount": [
+                    "[3000.0, inf]"
+                  ]
+                },
+                "keysExamined": 50,
+                "seeks": 1,
+                "dupsTested": 0,
+                "dupsDropped": 0,
+                "peakTrackedMemBytes": 0
+              }
+            }
+          }
+        },
+        "allPlansExecution": []
+      },
+      "queryShapeHash": "0E3F8F51471CBE1D60863533F4255FA154888DB144E915F22C85F2D97B0062A7",
+      "command": {
+        "find": "orders_validated",
+        "filter": {
+          "order_date": {
+            "$gte": "2026-01-01",
+            "$lte": "2026-12-31"
+          },
+          "total_amount": {
+            "$gte": 3000.0
+          }
+        },
+        "sort": {
+          "order_date": 1,
+          "total_amount": 1
+        },
+        "projection": {
+          "_id": 0,
+          "order_id": 1,
+          "order_date": 1,
+          "total_amount": 1,
+          "customer_name": 1,
+          "city": 1
+        },
+        "limit": 50,
+        "singleBatch": true,
+        "$db": "midterm_pipeline"
+      },
+      "serverInfo": {
+        "host": "Q9",
+        "port": 27017,
+        "version": "8.3.7",
+        "gitVersion": "34eee04f34989abb7a3d91447976f033f4f74af2"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalQueryFrameworkControl": "trySbeRestricted",
+        "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+      },
+      "ok": 1.0
+    }
+  }
+]
